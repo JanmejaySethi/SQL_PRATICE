@@ -78,7 +78,7 @@ CREATE TABLE EMPLOYEE(
    SELECT MAX(SALARY) AS SECOND_HIGHEST FROM EMPLOYEE
    WHERE SALARY<(SELECT MAX(SALARY) FROM EMPLOYEE);
 
-   -- Find employees who don�t have email IDs
+   -- Find employees who don’t have email IDs
    SELECT * FROM EMPLOYEE
    WHERE EMAIL_ID IS NULL;
 
@@ -111,4 +111,129 @@ CREATE TABLE EMPLOYEE(
    -- USE [AdventureWorks2019_DA];
 
 
-   SELECT * FROM [Person].[Person]
+  -- SELECT * FROM [Person].[Person]
+
+       CREATE TABLE Sales (
+       SalesID INT PRIMARY KEY,
+       Region varchar(50),
+       Product varchar(50),
+       SalesAmount INT,
+       SaleDate Date,
+       SalesRep VARCHAR(50)
+      );
+      
+     INSERT INTO Sales 
+     (SalesID, Region, Product, SalesAmount, SaleDate, SalesRep)
+     
+     VALUES
+     (1, 'North', 'Laptop', 50000, '2024-12-01', 'Alice'),
+     (2, 'South', 'Mobile', 20000, '2024-12-02', 'Bob'),
+     (3, 'North', 'Tablet', 30000, '2024-12-05', 'Alice'),
+     (4, 'East', 'Laptop', 45000, '2024-12-01', 'Carol'),
+     (5, 'South', 'Laptop', 55000, '2024-12-03', 'Bob'),
+     (6, 'North', 'Mobile', 25000, '2024-12-03', 'Dave'),
+     (7, 'East', 'Tablet', 40000, '2024-12-04', 'Carol');
+     
+     SELECT * FROM Sales;
+     
+     SELECT SalesRep,
+     case 
+     when SalesRep in ('Alice','Bob') then 'Top Performer'
+     when SalesRep = 'Carol' then 'consistent'
+     ELSE 'New Joiner'
+     END AS PerformancesStatus
+     FROM Sales;
+     
+     
+     SELECT SalesRep,Region,SalesAmount,
+     case
+     when Region= 'North' then SalesAmount*0.10
+     when Region= 'South' then SalesAmount*0.08
+     when Region= 'East'  then SalesAmount*0.05
+     ELSE 0
+     END AS BonusAmount
+     FROM Sales;
+
+     
+     SELECT Product, SalesAmount,
+     CASE
+     when product= 'Laptop' then 'Electronics-A'
+     when product IN(' Mobile','Tablet') then 'Electronics-B'
+     ELSE 'Other'
+     END AS ProductGroup,
+     
+	CASE
+     when SalesAmount>40000 then 'YES' ELSE 'NO'
+     END AS HighValueSale
+     FROM Sales;
+
+
+     
+ -- Customers Table
+CREATE TABLE Customers (
+    CustomerID INT,
+    CustomerName VARCHAR(50),
+    City VARCHAR(50)
+);
+
+INSERT INTO Customers VALUES
+(1, 'Alice', 'Delhi'),
+(2, 'Bob', 'Mumbai'),
+(3, 'Charlie', 'Delhi'),
+(4, 'David', 'Chennai');
+
+-- Orders Table
+CREATE TABLE Orders (
+    OrderID INT,
+    CustomerID INT,
+    Product VARCHAR(50),
+    Amount INT
+);
+
+INSERT INTO Orders VALUES
+(101, 1, 'Laptop', 50000),
+(102, 2, 'Mobile', 20000),
+(103, 1, 'Tablet', 15000),
+(104, 5, 'Monitor', 10000);  
+
+-- Products Table
+CREATE TABLE Products (
+    ProductName VARCHAR(50),
+    Price INT
+);
+
+INSERT INTO Products VALUES
+('Laptop', 50000),
+('Mobile', 20000),
+('Tablet', 15000),
+('Headphones', 3000);
+
+-- Q1: Get the list of customers who placed orders with product and amount details.
+
+SELECT 
+    c.CustomerID,
+    o.Product,
+    o.Amount
+FROM 
+    Customers As c
+INNER JOIN 
+    Orders As o
+ON 
+    c.CustomerID = o.CustomerID;
+
+
+
+-- 2. Get all customer names and their order details only for orders above ₹20,000.
+
+SELECT 
+    c.CustomerName,
+    o.Product,
+    o.Amount
+FROM 
+    Customers AS c
+INNER JOIN 
+    Orders As o
+ON 
+    c.CustomerID = o.CustomerID
+WHERE 
+    o.Amount > 20000;
