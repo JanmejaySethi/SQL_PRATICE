@@ -113,62 +113,7 @@ CREATE TABLE EMPLOYEE(
 
   -- SELECT * FROM [Person].[Person]
 
-       CREATE TABLE Sales (
-       SalesID INT PRIMARY KEY,
-       Region varchar(50),
-       Product varchar(50),
-       SalesAmount INT,
-       SaleDate Date,
-       SalesRep VARCHAR(50)
-      );
-      
-     INSERT INTO Sales 
-     (SalesID, Region, Product, SalesAmount, SaleDate, SalesRep)
-     
-     VALUES
-     (1, 'North', 'Laptop', 50000, '2024-12-01', 'Alice'),
-     (2, 'South', 'Mobile', 20000, '2024-12-02', 'Bob'),
-     (3, 'North', 'Tablet', 30000, '2024-12-05', 'Alice'),
-     (4, 'East', 'Laptop', 45000, '2024-12-01', 'Carol'),
-     (5, 'South', 'Laptop', 55000, '2024-12-03', 'Bob'),
-     (6, 'North', 'Mobile', 25000, '2024-12-03', 'Dave'),
-     (7, 'East', 'Tablet', 40000, '2024-12-04', 'Carol');
-     
-     SELECT * FROM Sales;
-     
-     SELECT SalesRep,
-     case 
-     when SalesRep in ('Alice','Bob') then 'Top Performer'
-     when SalesRep = 'Carol' then 'consistent'
-     ELSE 'New Joiner'
-     END AS PerformancesStatus
-     FROM Sales;
-     
-     
-     SELECT SalesRep,Region,SalesAmount,
-     case
-     when Region= 'North' then SalesAmount*0.10
-     when Region= 'South' then SalesAmount*0.08
-     when Region= 'East'  then SalesAmount*0.05
-     ELSE 0
-     END AS BonusAmount
-     FROM Sales;
 
-     
-     SELECT Product, SalesAmount,
-     CASE
-     when product= 'Laptop' then 'Electronics-A'
-     when product IN(' Mobile','Tablet') then 'Electronics-B'
-     ELSE 'Other'
-     END AS ProductGroup,
-     
-	CASE
-     when SalesAmount>40000 then 'YES' ELSE 'NO'
-     END AS HighValueSale
-     FROM Sales;
-
-
-     
  -- Customers Table
 CREATE TABLE Customers (
     CustomerID INT,
@@ -237,3 +182,90 @@ ON
     c.CustomerID = o.CustomerID
 WHERE 
     o.Amount > 20000;
+
+
+CREATE TABLE Sales (
+       SalesID INT PRIMARY KEY,
+       Region varchar(50),
+       Product varchar(50),
+       SalesAmount INT,
+       SaleDate Date,
+       SalesRep VARCHAR(50)
+      );
+      
+     INSERT INTO Sales 
+     (SalesID, Region, Product, SalesAmount, SaleDate, SalesRep)
+     
+     VALUES
+     (1, 'North', 'Laptop', 50000, '2024-12-01', 'Alice'),
+     (2, 'South', 'Mobile', 20000, '2024-12-02', 'Bob'),
+     (3, 'North', 'Tablet', 30000, '2024-12-05', 'Alice'),
+     (4, 'East', 'Laptop', 45000, '2024-12-01', 'Carol'),
+     (5, 'South', 'Laptop', 55000, '2024-12-03', 'Bob'),
+     (6, 'North', 'Mobile', 25000, '2024-12-03', 'Dave'),
+     (7, 'East', 'Tablet', 40000, '2024-12-04', 'Carol');
+     
+     SELECT * FROM Sales;
+
+-- Q1: Get the list of customers who placed orders with product and amount details.
+     
+     SELECT SalesRep,
+     case 
+     when SalesRep in ('Alice','Bob') then 'Top Performer'
+     when SalesRep = 'Carol' then 'consistent'
+     ELSE 'New Joiner'
+     END AS PerformancesStatus
+     FROM Sales;
+
+/* Write an SQL query to display the SalesRep, Region, SalesAmount, and a calculated column BonusAmount based on the following conditions:
+
+If the region is 'North', bonus is 10% of the SalesAmount
+
+If the region is 'South', bonus is 8% of the SalesAmount
+
+If the region is 'East', bonus is 5% of the SalesAmount
+
+For all other regions, the bonus should be 0
+*/
+     
+     SELECT SalesRep,Region,SalesAmount,
+     case
+     when Region= 'North' then SalesAmount*0.10
+     when Region= 'South' then SalesAmount*0.08
+     when Region= 'East'  then SalesAmount*0.05
+     ELSE 0
+     END AS BonusAmount
+     FROM Sales;
+
+/* Write an SQL query to display Product, SalesAmount, and derive two new columns:
+
+ProductGroup:
+
+If the product is 'Laptop', label it as 'Electronics-A'
+
+If the product is 'Mobile' or 'Tablet', label it as 'Electronics-B'
+
+Otherwise, label it as 'Other'
+
+HighValueSale:
+
+If SalesAmount is greater than 40,000, mark as 'YES'
+
+Else, mark as 'NO'
+
+Use CASE statements to implement the logic.
+*/
+
+     
+     SELECT Product, SalesAmount,
+     CASE
+     when product= 'Laptop' then 'Electronics-A'
+     when product IN(' Mobile','Tablet') then 'Electronics-B'
+     ELSE 'Other'
+     END AS ProductGroup,
+     
+     CASE
+     when SalesAmount>40000 then 'YES' ELSE 'NO'
+     END AS HighValueSale
+     FROM Sales;
+
