@@ -113,6 +113,40 @@ CREATE TABLE EMPLOYEE(
 
   -- SELECT * FROM [Person].[Person]
 
+        -- Dashboard -- India 
+/*
+YYYY-MM-DD format to respective format 
+Varchar      --   DATE 
+'02-20-1989' -- YYYY-MM-DD
+
+DATE        -- Varchar 
+YYYY-MM-DD  -- ? 
+*/
+
+select cast(getdate() AS Varchar)   -- Jul 13 2025  4:40PM
+
+select Convert(Varchar(100), getdate(), 1)   -- 07/13/25
+select Convert(Varchar(100), getdate(), 101) -- 07/13/2025
+select Convert(Varchar(100), getdate(), 103) -- 13/07/2025
+
+/*Varchar   to    Date 
+--diffent       yyyy-mm-dd
+Date      to    Varchar
+yyyy-mm-dd to   Convert
+*/
+
+Select ModifiedDate,
+Cast(ModifiedDate as varchar) as defualtstyleformat,
+Convert(varchar, ModifiedDate, 1) as Style1,
+Convert(varchar, ModifiedDate, 0) as Style0,
+Convert(varchar, ModifiedDate, 2) as Style2,
+Convert(varchar, ModifiedDate, 101) as Style101,
+Convert(varchar, ModifiedDate, 103) as Style103
+from [Person].[Person]
+
+     ------------------------------
+     ------------------------------
+
 
  -- Customers Table
 CREATE TABLE Customers (
