@@ -86,6 +86,109 @@ CREATE TABLE EMPLOYEE(
    SELECT MAX(SALARY), [CITY NAME] FROM EMPLOYEE
    GROUP BY [CITY NAME]
 
+
+     ------------------------------------------
+
+
+
+        LTRIM  -- blank space from left side before charcter staring 
+LTRIM(String_Expression)
+
+select LTRIM('     Babu')
+
+select LTRIM('     Babu     ')
+select RTRIM('     Babu     ')
+--     Babu
+Select TRIM('     Babu     ')
+--Babu
+
+Select TRIM('     Babu     V     K       ')
+-- Babu     V     K
+
+Select (Trim(FirstName)+' '+trim(MiddleName)+' '+Trim(LastName)) AS FULLNAME from EmployeeSF
+select UPPER('babu VK')
+-- when to use upper case
+-- Student        Dept                univercity
+-- UPPER(trim(babu ))    =        UPPER(trim(BABU))       =          UPPER(trim(Babu))
+select LOWER('babu VK')
+--Len(string expersion)
+Select len(9897)
+Select Len('Babu')
+-- Select 'ABC' +  9897
+
+Select Len('Babu VK')
+Select Len('   Babu VK')
+Select Len('       Babu VK         ')
+
+Select REVERSE('Babu V K')
+
+Select REVERSE('   Babu V K  ')
+--  K V ubaB 
+select left('babu V K',4)
+select Right('babu V K',4)
+'1PI13SCS008'
+select left('1PI13SCS008',1)
+Select left(ICIC6876,5)
+Select left(SBIN6876,4)
+Select Right('1PI13SCS008',3)
+Select Reverse(left(reverse('1PI13SCS008'),3))
+
+-- 800SCS31IP1
+--800
+008
+
+CHARINDEX(‘Expression_to_Find’, ‘Search_Expression’, [‘Strat_Location’])
+Select CHARINDEX('@', 'babu@gmail.com')   -- 5
+Select [Email], CHARINDEX('@', [Email])  from EmployeeSF
+
+Select CHARINDEX('@', 'babu@9035192617@Bagalore')   -- 5 
+                            6
+Select CHARINDEX('@', 'babu@9035192617@Bagalore',6) -- 16
+
+Select CHARINDEX('@', 'Anup Kumar@9035192617@Bagalore',6)  -- 11
+                                                      First Occurance of @+1
+Select CHARINDEX('@', 'Anup Kumar@9035192617@Bagalore',12) 
+
+Select CHARINDEX('@', 'babu@9035192617@Bagalore',CHARINDEX('@', 'babu@9035192617@Bagalore')+1)
+
+Select CHARINDEX('@', 'Anup Kumar@9035192617@Bagalore',CHARINDEX('@', 'Anup Kumar@9035192617@Bagalore')+1)  -- 22
+
+
+
+Select SUBSTRING('babu@gmail.com', 6, 5)
+Select SUBSTRING('babu@hcl.com', 6, 3)
+    -- 6
+-- Charindex(@)+1     Charindex(.)=11
+-- 'babu@gmail.com'
+--       6    .
+-- total 11-6 = 5 
+                                   @    .   @
+Select SUBSTRING('babu@gmail.com', 5+1, 11-(5+1))
+
+Select 
+SUBSTRING('babu@gmail.com', 
+CHARINDEX('@','babu@gmail.com')+1, 
+CHARINDEX('.','babu@gmail.com')-(CHARINDEX('@','babu@gmail.com')+1))
+
+Select SUBSTRING('babu@hcl.com',6,3)
+
+Select
+SUBSTRING('babu@hcl.com', 
+CHARINDEX('@','babu@hcl.com')+1, 
+CHARINDEX('.','babu@hcl.com')-(CHARINDEX('@','babu@hcl.com')+1))
+           
+
+
+Select
+SUBSTRING('babuKumar@hdfc.com', 
+            CHARINDEX('@','babuKumar@hdfc.com')+1, 
+                        CHARINDEX('.','babuKumar@hdfc.com')-(CHARINDEX('@','babuKumar@hdfc.com')+1))
+
+     
+
+     ---------------------------------------
+     --------------------------------------
+
    -- FIND THE PLACE OF '@'
    SELECT CHARINDEX('@',EMAIL_ID) FROM EMPLOYEE
 
@@ -107,6 +210,151 @@ CREATE TABLE EMPLOYEE(
    
    -------------------------------------------
    -------------------------------------------
+
+     Select Cast(4 as varchar(10))+'_'+ '3'
+
+Select 4.4+'3'
+
+Select 4 + cast('3.9' as Decimal(10,2))
+
+Explcitly 
+CAST  -- 99%
+CONVERT -- 1%
+
+Immplict possible  -- Costly 
+immplcit not possible 
+
+Select 5 + 4.5
+
+Select 5 + '4.5'
+
+Select 5+ CAST(4.5 as Int)
+
+Select Cast(4.5 as Int)
+Select Convert(Int, 4.5)
+
+
+create table Stu1(
+id int,
+Name varchar (20)
+)
+
+insert into Stu1 values (1, 'Sam')
+insert into Stu1 values (3, 'Ram')
+insert into Stu1 values (3, 'Sara')
+
+Select * from Stu1
+1-Sam
+3-Ram
+
+Select Cast(Id as varchar(10))+'-'+Name
+from Stu1
+
+Select Convert(varchar(10), ID)+'-'+Name
+from Stu1
+
+Select getdate()
+
+Select Cast(getdate() as Varchar(100))
+Select Convert(Varchar(100), getdate())
+
+Select * from ABCDVarchar
+Select cast('01/07/09' as Date)  -- 2009-01-07
+
+Select cast('14 Aug 22' as Date) 
+Select cast('08/14/22' as Date)
+
+Select cast('01/1990/Sep' as Date)
+
+select Dateformat, isdate(dateformat)
+--cast(dateformat as Date) as Dateformatconv
+from ABCDVarchar
+
+select Dateformat, isdate(dateformat),
+TRY_cast(dateformat as Date) as Dateformatconv
+from ABCDVarchar
+
+Select 
+CAST(
+(left('01/1990/Sep',2) +'/'+
+right('01/1990/Sep',3) +'/'+
+SUbstring('01/1990/Sep',4,4))
+AS DATE)
+
+
+Select Cast('01/1990/Sep' as date)
+             dd/yyyy/mon
+Select Cast('01/Sep/1990' as date)
+             dd/mon/yyyy
+
+
+create table varchartable
+(
+Tid varchar(10),
+Qty varchar(50),
+Price varchar(50),
+trasdate varchar(50) 
+)
+
+
+insert into varchartable values ('2','2','9.8','2020-02-01')
+insert into varchartable values ('3','1','233.4','2020-03-04')
+insert into varchartable values ('4','2','32.2','2020-04-03')
+insert into varchartable values ('5','1','19.9','2020-05-05')
+
+Select Sum(cast(Qty as int)) from varchartable
+Select Sum(convert(int, Qty)) from varchartable
+
+Select Sum(cast(Price as Decimal(10,2))) from varchartable
+Select Sum(convert(Decimal(10,2), Price)) from varchartable
+
+Select min(cast(trasdate as date)) from varchartable
+Select min(Convert(date, trasdate)) from varchartable
+
+
+     ---------------------
+     ---------------------
+
+
+     
+Select Customer_ID from MED_TAB
+where GENDER='Female' and Age>=70
+
+-- Max, min, Avg, Sum
+
+Select 
+Max (Spent_amount) as MX_SM,
+Min (Spent_amount) as MIN_SM,
+Avg (Spent_amount) as AV_SM,
+Sum (Spent_amount) as SU_SM
+from MED_TAB
+
+
+Select * from [dbo].MED_TAB
+
+Select CUSTOMER_ID,
+datediff(day, CARD_REG_DATE, FIRST_USE_DTE) as Gapbetweenuseandreg
+from MED_TAB
+
+select * from MED_TAB
+where Datediff(Year, DOB, getdate())>=70
+
+select Count(*), count(CUSTOMER_ID), count(CARD_REG_DATE), count(distinct CARD_REG_DATE)  FROM MED_TAB
+
+-- APPOLO, CIPLA and GENO 
+
+ACT, NSW, QLD
+Town start with L and end with K 
+
+-- i need all female customers whos company not in 'APPOLO', 'CIPLA','GENO' and first char of the twon between k to l 
+-- State code hsould be in ('ACT', 'NSW', 'QLD')
+select * from MED_TAB
+Where GENDER='Female'
+AND STATE_CODE in ('ACT', 'NSW', 'QLD')
+AND TOWN LIKE '[K-L]%'
+AND Company not in ('APPOLO', 'CIPLA','GENO') 
+
+     
    
    -- USE [AdventureWorks2019_DA];
 
@@ -143,6 +391,26 @@ Convert(varchar, ModifiedDate, 2) as Style2,
 Convert(varchar, ModifiedDate, 101) as Style101,
 Convert(varchar, ModifiedDate, 103) as Style103
 from [Person].[Person]
+
+     ---------------
+
+--Sales numberic(10,2)
+1234567.89
+
+-- 1,234,567.89
+-- 12,34,567.89
+-- LP 
+Select FORMAT(1234567.89, 'C')   -- $1,234,567.89
+Select FORMAT(1234567.89, 'N')   -- 1,234,567.89
+Select FORMAT(1234567.89, 'G')   -- 1234567.89
+
+Select FORMAT(1234567.89, 'C','hi-IN')   -- ₹12,34,567.89
+Select FORMAT(1234567.89, 'N','hi-IN')   --  12,34,567.89
+Select FORMAT(1234567.89, 'G','hi-IN')   --  1234567.89
+
+Select FORMAT(getdate(), 'D','hi-IN')   -- 13 जुलाई 2025
+Select FORMAT(getdate(), 'D','zh-cn')  -- 2025年7月13日
+     
 
      ------------------------------
      ------------------------------
@@ -216,6 +484,67 @@ ON
     c.CustomerID = o.CustomerID
 WHERE 
     o.Amount > 20000;
+
+
+---------------------------
+---------------------------
+
+
+Create table Student (
+ID int,
+F_Name varchar(255),
+L_Name Varchar(255),
+Age int,
+Email Varchar (255),
+);
+
+insert into Student values( 1,'Babu','VK',28,'B@B.com');
+insert into Student values( 2,'Jhon','P',29,'J@J.com');
+insert into Student values( 3,'Kumar','P',26,'K@P.com');
+insert into Student values( 4,'Suresh','Jain',16,'S@J.com');
+insert into Student values( 5,'Suresh','Jain',12, 'Emailid');
+
+Select *,
+iif(Age>=18, 'Major', 'Minior') as Status
+from Student
+
+--99.9 Case
+Select *,
+Case 
+when Age>=18 THEN  'Major'
+else 'Minior' 
+END  AS Status from Student
+/*
+0-20
+20- 40
+40-60
+60+
+*/
+Select CUSTOMER_ID, Company, Age, 
+Case 
+when Age between 0 AND 20 then '0-20 bucket'
+when Age between 21 AND 40 then '21-40 bucket'
+when Age between 41 AND 60 then '41-60 bucket'
+when Age>60 then 'More then 60'
+ELSE 'Didnot meet the cond'
+END AS Age_Bucket
+from MED_TAB
+
+Select * from MED_TAB
+
+
+Select CUSTOMER_ID, Company, Age, 
+Case 
+	when Age>0 then '0-20 bucket'
+	when Age>21 then '21-40 bucket'
+	when Age>41 then '41-60 bucket'
+	when Age>60 then 'More then 60'
+	ELSE 'Didnot meet the cond'
+END AS Age_Bucket
+from MED_TAB
+
+
+  
 
 
 CREATE TABLE Sales (
