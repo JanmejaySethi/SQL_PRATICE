@@ -544,7 +544,153 @@ END AS Age_Bucket
 from MED_TAB
 
 
-  
+
+Select *,
+ CASE  
+      WHEN Spent_amount>1000 then '1000+'
+	  WHEN Spent_amount>500 then '500 to 1000'
+      WHEN Spent_amount>0 then '0 to 500'
+	  Else 'Didft meet the condition'
+ END AS Spend_Bucket
+ from MED_Tab
+
+/*
+ 60+ year and 1000+ ruppes ... then 10%
+ 40+ Year and 1000+ rupped     then 5% 
+ <40           1000+ ruppes      2%
+ */
+ Select Age, Spent_amount, 
+ Case 
+	when Age>60 AND Spent_amount>1000 then '10% discount'
+	when Age>40 AND Spent_amount>1000 then '5% discount'
+	when Age<=40 AND Spent_amount>1000 then '2% discount'
+   ELSE 'NA' 
+ END AS Discount
+ from MED_TAB
+
+
+ Select Age, Spent_amount from MED_TAB
+
+
+
+  Select Age, Spent_amount, 
+ Case 
+	when Age>60 AND Spent_amount>1000 then Spent_amount*0.1
+	when Age>40 AND Spent_amount>1000 then Spent_amount*0.05
+	when Age<=40 AND Spent_amount>1000 then Spent_amount*0.02
+   ELSE 0.0
+ END AS Discount_Amount,
+
+  Case 
+	when Age>60 AND Spent_amount>1000 then '10% discount'
+	when Age>40 AND Spent_amount>1000 then '5% discount'
+	when Age<=40 AND Spent_amount>1000 then '2% discount'
+   ELSE 'NA' 
+ END AS Discount_Per
+
+ from MED_TAB	
+
+
+----------
+	
+ create table TabA(
+Name varchar(2)
+)
+
+Insert into TabA values('A')
+Insert into TabA values('B')
+Insert into TabA values('A')
+Insert into TabA values('B')
+Insert into TabA values('A')
+Insert into TabA values('B')
+Insert into TabA values('A')
+Insert into TabA values('B')
+
+Select * from TabA
+
+Select 
+Case when Name='A' then 'A' END AS A,
+Case when Name='B' then 'B' END AS B
+From TabA
+
+
+
+SELECT * FROM [dbo].Company_City;
+
+-- APPLE 20%
+-- DELL 15%
+-- 0%
+
+
+Select *,
+CASE 
+    WHEN PRODUCT='APPLE' Then PRICE*0.2
+	WHEN PRODUCT='DELL' Then PRICE*0.15
+	ELSE 0
+END AS Dicsount_amt
+from [dbo].[Company_City]
+
+-- APPLE  Bangalore 20 DELHI 15% BHUBANESWAR 10%  else 0
+-- DELL 15%
+-- 0%
+-- Select * from [dbo].[COmpany_City]
+
+Select *,
+CASE     
+    WHEN PRODUCT='APPLE' THEN
+	   CASE 
+	       WHEN CITY='BANGALORE' Then PRICE*0.2
+		   WHEN CITY='DELHI' Then PRICE*0.15
+		   WHEN CITY='BHUBANESWAR' Then PRICE*0.1
+		   Else 0
+	   END
+	WHEN PRODUCT='DELL' Then PRICE*0.15
+	ELSE 0
+END AS Dicsount_amt
+from [dbo].[COmpany_City]
+
+
+/*
+APPLE	BANGALORE   20
+APPLE	DELHI       15
+APPLE	BHUBANESWAR 10
+DELL	BHUBANESWAR  20
+DELL	MUMBAI       15
+DELL	CHENNAI      10
+HP	DELHI            30
+HP	BHUBANESWAR      25 
+*/
+
+Select PRODUCT, CITY, PRICE,
+	CASE When PRODUCT='APPLE' Then                  
+		Case 
+		     When CITY='BANGALORE' Then PRICE-(PRICE*0.2 )  
+		     When CITY='DELHI' Then PRICE-(PRICE*0.15 )    
+	         When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+	     when PRODUCT='DELL' Then 
+		 Case 
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.2   )
+		     When CITY='MUMBAI' Then PRICE-(PRICE*0.15)      
+	         When CITY='CHENNAI' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+		when PRODUCT='HP' Then 
+		 Case 
+		     When CITY='DELHI' Then PRICE-(PRICE*0.3)   
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.25)
+			 ELSE PRICE
+		END
+		Else 0
+	END  AS Updated_Price
+
+from [dbo].[COmpany_City]	
+	
+
+
+  -------------
+  -------------	
 
 
 CREATE TABLE Sales (
@@ -632,3 +778,37 @@ Use CASE statements to implement the logic.
      END AS HighValueSale
      FROM Sales;
 
+
+--------
+
+
+    create table Employee_NN_CK_DC_UC
+(
+E_Id int not null unique,
+E_Name Varchar(100) Check (len(E_Name)>2) unique,
+Experiance tinyint,
+gender Char(6),
+E_DOB Date,
+E_Age tinyint Check (E_Age>20 AND E_Age<70),
+[Phone Number] bigint not null Check (len([Phone Number])=10),
+Email_Id varchar(100) not null Check (Email_Id like '__%@___%.%') unique,
+Is_Married bit,
+[Cast] varchar(10) Constraint Employee_NN_CK_DC_UC_Cast_DF Default 'General',
+join_date datetime not null Check (join_date<='2025-06-21'),
+CityName Nvarchar(100),
+Constraint Employee_NN_CK_DC_UC_Phone_uniqueCheck unique([Phone Number])
+)
+
+
+insert into Employee_NN_CK_DC_UC values
+(1234, 'Babu', 11, 'male', '1990-08-03', 35, 9035192617, 'babuvk@gmail.com', 'TRUE','2A', '2025-06-01 09:04:06',N'ಬೆಂಗಳೂರು')
+
+insert into Employee_NN_CK_DC_UC values
+(1235, 'Ram', 11, 'male', '1990-08-03', 35, 9035192618, 'babuv@gmail.com', 'TRUE',null, '2025-06-01 09:04:06',N'ಬೆಂಗಳೂರು')
+
+insert into Employee_NN_CK_DC_UC(E_Id,E_Name,Experiance,gender,E_DOB,E_Age,[Phone Number],Email_Id,Is_Married,join_date, CityName)
+values
+(1237, null, 11, 'male', '1990-08-03', 35, 9035192678, 'babuvk67@gmail.com', 'TRUE', '2025-06-01 09:04:06',N'ಬೆಂಗಳೂರು')
+
+
+Select * from Employee_NN_CK_DC_UC
