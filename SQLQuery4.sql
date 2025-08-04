@@ -685,7 +685,261 @@ Select PRODUCT, CITY, PRICE,
 		Else 0
 	END  AS Updated_Price
 
-from [dbo].[COmpany_City]	
+from [dbo].[Company_City]
+
+
+	------
+
+
+Update [dbo].[Company_City]
+SET PRICE=
+	CASE When PRODUCT='APPLE' Then                  
+		Case 
+		     When CITY='BANGALORE' Then PRICE-(PRICE*0.2 )  
+		     When CITY='DELHI' Then PRICE-(PRICE*0.15 )    
+	         When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+	     when PRODUCT='DELL' Then 
+		 Case 
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.2   )
+		     When CITY='MUMBAI' Then PRICE-(PRICE*0.15)      
+	         When CITY='CHENNAI' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+		when PRODUCT='HP' Then 
+		 Case 
+		     When CITY='DELHI' Then PRICE-(PRICE*0.3)   
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.25)
+			 ELSE PRICE
+		END
+		Else 0
+	END 
+
+
+    Select * from [dbo].[Company_City]
+
+
+-----------
+
+
+    Select PRODUCT, CITY, PRICE,
+	CASE When PRODUCT='APPLE' Then                  
+		Case 
+		     When CITY='BANGALORE' Then PRICE-(PRICE*0.2 )  
+		     When CITY='DELHI' Then PRICE-(PRICE*0.15 )    
+	         When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+	     when PRODUCT='DELL' Then 
+		 Case 
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.2   )
+		     When CITY='MUMBAI' Then PRICE-(PRICE*0.15)      
+	         When CITY='CHENNAI' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+		when PRODUCT='HP' Then 
+		 Case 
+		     When CITY='DELHI' Then PRICE-(PRICE*0.3)   
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.25)
+			 ELSE PRICE
+		END
+		Else 0
+	END  AS Updated_Price
+
+from [dbo].[Company_City]
+   where CASE When PRODUCT='APPLE' Then                  
+		Case 
+		     When CITY='BANGALORE' Then PRICE-(PRICE*0.2 )  
+		     When CITY='DELHI' Then PRICE-(PRICE*0.15 )    
+	         When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+	     when PRODUCT='DELL' Then 
+		 Case 
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.2   )
+		     When CITY='MUMBAI' Then PRICE-(PRICE*0.15)      
+	         When CITY='CHENNAI' Then PRICE-(PRICE*0.1 )
+			 ELSE PRICE
+		END
+		when PRODUCT='HP' Then 
+		 Case 
+		     When CITY='DELHI' Then PRICE-(PRICE*0.3)   
+		     When CITY='BHUBANESWAR' Then PRICE-(PRICE*0.25)
+			 ELSE PRICE
+		END
+		Else 0
+	END <30000
+
+
+
+create table department1
+(
+id int,
+Dname Varchar(100)
+)
+insert into department1 values(1, 'CS')
+insert into department1 values(1, 'IS')
+insert into department1 values(1, 'ME')
+insert into department1 values(1, 'EC')
+insert into department1 values(1, 'CIVIL')
+Select * from department1
+
+Update department1
+Set Dname=
+          (Case 
+			when Dname='CS' then 'Computer Science'          
+			when Dname='IS' then 'Information Science'
+			when Dname='ME' then 'mechanical Science'
+			when Dname='EC' then 'Electronics  and communi'
+			Else Dname
+		  END )
+
+Select * from department1	
+
+	
+------------------
+	-------------------
+
+
+CREATE TABLE EMPLOYEE1
+(
+   EmpCode      INT Primary Key,
+   EmpFName     VARCHAR(15),
+   EmpLName     VARCHAR(15),
+   Job          VARCHAR(45),
+   Manager      VARCHAR(4),
+   HireDate     DATE,
+   Salary       INT,
+   Commission   INT,
+   DEPTCODE     INT
+);
+
+INSERT INTO EMPLOYEE1
+
+VALUES (9369, 'TONY', 'STARK', 'SOFTWARE ENGINEER', 7902, '1980-12-17', 2800,0,20),
+       (9499, 'TIM', 'ADOLF', 'SALESMAN', 7698, '1981-02-20', 1600, 300,30),    
+       (9566, 'KIM', 'JARVIS', 'MANAGER', 7839, '1981-04-02', 3570,0,20),
+       (9654, 'SAM', 'MILES', 'SALESMAN', 7698, '1981-09-28', 1250, 1400, 30),
+       (9782, 'KEVIN', 'HILL', 'MANAGER', 7839, '1981-06-09', 2940,0,10),
+       (9788, 'CONNIE', 'SMITH', 'ANALYST', 7566, '1982-12-09', 3000,0,20),
+       (9839, 'ALFRED', 'KINSLEY', 'PRESIDENT', 7566, '1981-11-17', 5000,0, 10),
+       (9844, 'PAUL', 'TIMOTHY', 'SALESMAN', 7698, '1981-09-08', 1500,0,30),
+       (9876, 'JOHN', 'ASGHAR', 'SOFTWARE ENGINEER', 7788, '1983-01-12',3100,0,20),
+       (9900, 'ROSE', 'SUMMERS', 'TECHNICAL LEAD', 7698, '1981-12-03', 2950,0, 20),
+       (9902, 'ANDREW', 'FAULKNER', 'ANALYST', 7566, '1981-12-03', 3000,0, 10),
+       (9934, 'KAREN', 'MATTHEWS', 'SOFTWARE ENGINEER', 7782, '1982-01-23', 3300,0,20),
+       (9591, 'WENDY', 'SHAWN', 'SALESMAN', 7698, '1981-02-22', 500,0,30),
+       (9698, 'BELLA', 'SWAN', 'MANAGER', 7839, '1981-05-01', 3420, 0,30),
+       (9777, 'MADII', 'HIMBURY', 'ANALYST', 7839, '1981-05-01', 2000, 200, NULL),
+       (9860, 'ATHENA', 'WILSON', 'ANALYST', 7839, '1992-06-21', 7000, 100, 50),
+       (9861, 'JENNIFER', 'HUETTE', 'ANALYST', 7839, '1996-07-01', 5000, 100, 50);
+	  
+	  INSERT INTO EMPLOYEE1  
+VALUES(9999, 'Babu', 'VK', 'ANALYST', 7839, '1981-05-01', 2000, 200, NULL)
+
+Select * from EMPLOYEE1
+
+Select sum(salary) from EMPLOYEE1  -- 51930
+
+Select distinct JOB from EMPLOYEE1
+
+--------------
+Select JOB,EmpCode,sum(salary) from EMPLOYEE1
+Group by JOB
+
+--What is include in the group by column only those columns should be in a select and rest in an agg format
+----------
+
+Select EmpFName, Sum(salary) from EMPLOYEE1   -- No because we can't combine agg and non agg columns without group
+--Group by EmpFName
+
+Select sum(salary), sum(commission) from EMPLOYEE1    -- row
+
+Select JOB, sum(salary), sum(commission) from EMPLOYEE1  -- 6 rows 3 columns
+Group by JOB
+
+Select sum(salary), sum(commission) from EMPLOYEE1     -- 6 rows 2 column 
+Group by JOB
+
+
+Select JOB,sum(salary), sum(commission) from EMPLOYEE1   -- NO
+Group by EmpFName
+
+Select EmpFName,JOB,sum(salary), sum(commission) from EMPLOYEE1 
+Group by EmpFName, JOB
+
+--Group by agg 
+-- EmpFName, JOB, Sum(sal) sum(comm)	
+
+Select JOB,Count(EmpCode) as cnt_Emp from EMPLOYEE 
+where Commission>0
+GROUP BY JOB
+
+
+		  
+Select JOB,Count(EmpCode) as cnt_Emp from EMPLOYEE1 
+where Commission>0
+GROUP BY JOB
+
+-- get me total salary of each JOB where Emp's commission is more then 0
+
+Select JOB, Sum(salary) as sumsal from EMPLOYEE
+Where Commission>0 
+group by JOB 
+
+-- get me total salary of each JOB where Emp's commission is more then 0 and sum of salary is grater then 10000
+Select JOB, Sum(salary) as sumsal from EMPLOYEE1
+Where Commission>0
+group by JOB 
+HAVING Sum(salary)>10000
+
+
+-- get me total salary of each JOB where Emp's commission is more then 0 and JOB is ANALYST and SOFTWARE ENGINEER
+
+Select JOB, SUm(Salary) from EMPLOYEE1
+Where Commission>0
+AND JOB in ('ANALYST', 'SOFTWARE ENGINEER')
+Group by JOB
+
+
+Select JOB, SUm(Salary) from EMPLOYEE1
+where Commission>0
+Group by JOB
+having JOB in ('ANALYST', 'SOFTWARE ENGINEER')
+
+-- having is used to filterout aggrigated columns or grouped columns columns and after group by 
+-- Group by treats all nulls are equal similar to disctinct and unique 
+Select * from EMPLOYEE1
+
+select Distinct DEPTCODE from EMPLOYEE1
+
+select DEPTCODE, Sum(Salary) from EMPLOYEE1
+group by DEPTCODE
+
+
+
+
+Select Company,sum(spent_Amount) from MED_TAB
+Group by Company
+
+Select GENDER, sum(spent_Amount) from MED_TAB
+group by GENDER
+
+Select distinct GENDER, COMPANY from MED_TAB
+
+Select COMPANY, GENDER,sum(spent_Amount) from MED_TAB
+group by  COMPANY, GENDER
+
+
+Select Company, sum(spent_Amount)  from MED_TAB
+Group by Company
+Having sum(spent_Amount)>190000
+
+
+Select Company, sum(spent_Amount) as sum_spdamt  from MED_TAB
+Group by Company
+Having  sum(spent_Amount)>190000		  
 	
 
 
