@@ -939,7 +939,87 @@ Having sum(spent_Amount)>190000
 
 Select Company, sum(spent_Amount) as sum_spdamt  from MED_TAB
 Group by Company
-Having  sum(spent_Amount)>190000		  
+Having  sum(spent_Amount)>190000
+
+
+
+
+/*
+200>200+
+500>500+
+1000>1000+
+<200 less then 200
+*/
+
+
+Select GENDER, spent_Amount,
+Case when spent_Amount>1000 then '1000+'
+     when spent_Amount>500 then '500+'
+	 when spent_Amount>200 then '200+'
+	 when spent_Amount<=200 then 'Less then 200'
+	 else 'NA'
+	 END as SPEND_bucket
+from MED_TAB 
+
+------------
+
+Select  
+Case when spent_Amount>1000 then '1000+'
+     when spent_Amount>500 then '500+'
+	 when spent_Amount>200 then '200+'
+	 when spent_Amount<=200 then 'Less then 200'
+	 else 'NA'
+	 END as SPEND_bucket, Sum(Spent_amount) as spendsum
+from MED_TAB
+Group by
+Case when spent_Amount>1000 then '1000+'
+     when spent_Amount>500 then '500+'
+	 when spent_Amount>200 then '200+'
+	 when spent_Amount<=200 then 'Less then 200'
+	 else 'NA'
+	 END
+
+---------------
+---- from employee1 table
+
+Select
+case 
+	when Salary>5000 then '5000+'
+	when Salary>3000 then '3000+'
+	when Salary<=3000 then 'less then 3000'
+END as Salary_bucket,
+Count(*)
+from EMPLOYEE1
+Group by 
+case 
+	when Salary>5000 then '5000+'
+	when Salary>3000 then '3000+'
+	when Salary<=3000 then 'less then 3000'
+END 
+
+
+---------------
+
+Select
+case 
+	when Salary>5000 then '5000+'
+	when Salary>3000 then '3000+'
+	when Salary<=3000 then 'less then 3000'
+END as Salary_bucket,
+Count(*)
+from EMPLOYEE1
+Group by 
+case 
+	when Salary>5000 then '5000+'
+	when Salary>3000 then '3000+'
+	when Salary<=3000 then 'less then 3000'
+END
+HAVING 
+case 
+	when Salary>5000 then '5000+'
+	when Salary>3000 then '3000+'
+	when Salary<=3000 then 'less then 3000'
+END in ('3000+','less then 3000')		  
 	
 
 
