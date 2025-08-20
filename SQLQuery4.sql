@@ -412,79 +412,6 @@ Select FORMAT(getdate(), 'D','hi-IN')   -- 13 जुलाई 2025
 Select FORMAT(getdate(), 'D','zh-cn')  -- 2025年7月13日
      
 
-     ------------------------------
-     ------------------------------
-
-
- -- Customers Table
-CREATE TABLE Customers (
-    CustomerID INT,
-    CustomerName VARCHAR(50),
-    City VARCHAR(50)
-);
-
-INSERT INTO Customers VALUES
-(1, 'Alice', 'Delhi'),
-(2, 'Bob', 'Mumbai'),
-(3, 'Charlie', 'Delhi'),
-(4, 'David', 'Chennai');
-
--- Orders Table
-CREATE TABLE Orders (
-    OrderID INT,
-    CustomerID INT,
-    Product VARCHAR(50),
-    Amount INT
-);
-
-INSERT INTO Orders VALUES
-(101, 1, 'Laptop', 50000),
-(102, 2, 'Mobile', 20000),
-(103, 1, 'Tablet', 15000),
-(104, 5, 'Monitor', 10000);  
-
--- Products Table
-CREATE TABLE Products (
-    ProductName VARCHAR(50),
-    Price INT
-);
-
-INSERT INTO Products VALUES
-('Laptop', 50000),
-('Mobile', 20000),
-('Tablet', 15000),
-('Headphones', 3000);
-
--- Q1: Get the list of customers who placed orders with product and amount details.
-
-SELECT 
-    c.CustomerID,
-    o.Product,
-    o.Amount
-FROM 
-    Customers As c
-INNER JOIN 
-    Orders As o
-ON 
-    c.CustomerID = o.CustomerID;
-
-
-
--- 2. Get all customer names and their order details only for orders above ₹20,000.
-
-SELECT 
-    c.CustomerName,
-    o.Product,
-    o.Amount
-FROM 
-    Customers AS c
-INNER JOIN 
-    Orders As o
-ON 
-    c.CustomerID = o.CustomerID
-WHERE 
-    o.Amount > 20000;
-
 
 ---------------------------
 ---------------------------
@@ -1232,3 +1159,490 @@ values
 
 
 Select * from Employee_NN_CK_DC_UC
+
+----------------------------------
+		--------------
+
+-- JOIN
+
+CREATE TABLE PRODUCT(
+ID INT IDENTITY PRIMARY KEY,
+NAME NVARCHAR(50),
+DESCRIPTION NVARCHAR(250)
+)
+
+CREATE TABLE PRODUCTSALES(
+ID INT IDENTITY PRIMARY KEY,
+PRODUCTID INT FOREIGN KEY REFERENCES PRODUCT(ID),
+UNITPRICE INT,
+QUANTITYSOLD INT
+)
+
+
+INSERT INTO PRODUCT VALUES('TV', '52 INCH BLACK COVER LCD TV')
+INSERT INTO PRODUCT VALUES('LAPTOP', 'VERY THIN BLACK COLOR ACER LAPTOP')
+INSERT INTO PRODUCT VALUES('DESKTOP', 'HP HIGH PERFORMANCE DESKTOP')
+
+INSERT INTO PRODUCTSALES VALUES (3, 450, 5)
+INSERT INTO PRODUCTSALES VALUES (2, 250, 7)
+INSERT INTO PRODUCTSALES VALUES (3, 450, 4)
+INSERT INTO PRODUCTSALES VALUES (3, 450, 9)
+
+SELECT * FROM PRODUCT;
+SELECT * FROM PRODUCTSALES;
+
+SELECT NAME, UNITPRICE, QUANTITYSOLD FROM 
+PRODUCT
+CROSS JOIN
+PRODUCTSALES    -- Cross join 
+
+SELECT * FROM
+PRODUCT
+CROSS JOIN                
+PRODUCTSALES    -- CROSS JOIN
+
+
+Select PRODUCT.ID, 
+PRODUCT.NAME, 
+PRODUCTSALES.UNITPRICE,
+PRODUCTSALES.QUANTITYSOLD  
+from PRODUCT join PRODUCTSALES
+on PRODUCT.ID=PRODUCTSALES.PRODUCTID
+
+
+-----------
+
+-- Table 1: Student Education
+
+CREATE TABLE STU_EDUCATION (
+    STU_ID VARCHAR(5),
+    STU_NAME VARCHAR(50),
+    GENDER VARCHAR(10),
+    EDUCATION VARCHAR(20)
+);
+
+
+-- Table 2: Student Experience
+
+CREATE TABLE STU_EXPERIENCE (
+    STU_ID VARCHAR(5),
+    YOE INT,
+    COMPANY VARCHAR(50),
+    SALARY INT,
+);
+
+
+INSERT INTO STU_EDUCATION (STU_ID, STU_NAME, GENDER, EDUCATION) VALUES
+('S1', 'GAURABH', 'MALE', 'BTECH'),
+('S2', 'NIRUPA', 'FEMALE', 'BCOM'),
+('S3', 'LAXMI', 'FEMALE', 'BSC'),
+('S4', 'BIJAY', 'MALE', 'MCA'),
+('S5', 'KARAN', 'MALE', 'MTECH'),
+('S6', 'ABHISHEK', 'MALE', 'NPHARMA'),
+('S7', 'DEBASHIS', 'MALE', 'MBA');
+
+
+INSERT INTO STU_EXPERIENCE (STU_ID, YOE, COMPANY, SALARY) VALUES
+('S1', 4, 'JP MORGAN', 125000),
+('S2', 5, 'MORGAN STANLEY', 152000),
+('S3', 2, 'BCG', 145000),
+('S4', 3, 'MCKENSEY', 140000),
+('S5', 6, 'HUL', 168000),
+('S8', 7, 'ITC', 100000),
+('S9', 1, 'HSBC', 172000);
+
+
+Select * from STU_EDUCATION
+Select * from STU_EXPERIENCE
+
+-- INNER JOIN
+
+Select  ED.STU_ID,
+ED.STU_NAME,
+ED.EDUCATION,
+--EX.STU_ID,
+EX.COMPANY,
+EX.SALARY
+from STU_EDUCATION AS ED
+inner join 
+STU_EXPERIENCE AS EX
+on ED.STU_ID=EX.STU_ID
+
+--- LEFT JOIN
+
+Select ED.STU_ID,
+ED.STU_NAME,
+ED.EDUCATION,
+--EX.STU_ID,
+EX.COMPANY,
+EX.SALARY
+from STU_EDUCATION AS ED
+Left join 
+STU_EXPERIENCE AS EX
+on ED.STU_ID=EX.STU_ID
+
+-- RIGHT JOIN
+
+Select  --ED.STU_ID,
+ED.STU_NAME,
+ED.EDUCATION,
+EX.STU_ID,
+EX.COMPANY,
+EX.SALARY
+from STU_EDUCATION AS ED
+Right join 
+STU_EXPERIENCE AS EX
+on ED.STU_ID=EX.STU_ID
+
+
+---
+
+-- i want students who didn't placed 
+
+Select  ED.STU_ID,
+ED.STU_NAME,
+ED.EDUCATION,
+--EX.STU_ID,
+EX.COMPANY,
+EX.SALARY
+from STU_EDUCATION AS ED
+Left join 
+STU_EXPERIENCE AS EX
+on ED.STU_ID=EX.STU_ID
+Where EX.COMPANY is null
+
+----
+
+CREATE TABLE EMP_DETAILS (
+    EMP_ID     VARCHAR(15),
+    COMPANY    VARCHAR(20),
+    GENDER     VARCHAR(10),
+    AGE        INT,
+    STATE_CODE VARCHAR(10)
+);
+
+CREATE TABLE EMP_EXPERIENCE (
+    EMP_ID     VARCHAR(15) NOT NULL,
+    DEPARTMENT VARCHAR(20),
+    EDUCATION  VARCHAR(20),
+    EXPERIENCE INT,
+    SALARY     INT
+);
+
+
+INSERT INTO EMP_DETAILS 
+ (EMP_ID, COMPANY, GENDER, AGE, STATE_CODE)
+
+VALUES
+('1000032547','DELL','Female',29,'QLD'),
+('1000032548','DELL','Female',39,'WA'),
+('1000032549','DELL','Female',54,'NSW'),
+('1000032550','DELL','Male',35,'VIC'),
+('1000032551','DELL','Male',34,'VIC'),
+('1000032552','DELL','Female',26,'NSW'),
+('1000032553','DELL','Female',26,'VIC'),
+('1000032554','DELL','Male',26,'QLD'),
+('1000032555','HP','Male',55,'NSW'),
+('1000032556','HP','Female',61,'ACT'),
+('1000032557','HP','Female',28,'QLD'),
+('1000032558','HP','Male',57,'VIC'),
+('1000032559','HP','Female',34,'VIC'),
+('1000032560','HP','Female',28,'NSW'),
+('1000032561','HP','Female',51,'QLD'),
+('1000032562','ASUS','Female',61,'VIC'),
+('1000032563','ASUS','Female',48,'QLD'),
+('1000032564','ASUS','Female',65,'NSW'),
+('1000032565','ASUS','Female',63,'NSW'),
+('1000032566','ASUS','Male',64,'NSW'),
+('1000032567','ASUS','Male',41,'NSW'),
+('1000032568','ASUS','Female',24,'VIC'),
+('1000032569','ASUS','Female',62,'NSW');
+
+
+
+INSERT INTO EMP_EXPERIENCE
+ (EMP_ID, DEPARTMENT, EDUCATION, EXPERIENCE, SALARY)
+
+VALUES
+('1000032547','MKT','BTECH',  7,  47495),
+('1000032548','MKT','MBA',   17, 134385),
+('1000032549','MKT','MTECH', 32, 286464),
+('1000032550','OPS','MBA',   13,  99047),
+('1000032551','OPS','MCA',   12,  87996),
+('1000032552','OPS','MTECH',  4,  26528),
+('1000032553','OPS','MTECH',  4,  24100),
+('1000032554','SALES','MTECH',4,  36460),
+('1000032555','SALES','BBA',  33, 198264),
+('1000032556','SALES','BBA',  39, 330759),
+('1000032557','SALES','BBA',   6,  56382),
+('1000032558','IT','BBA',     35, 263795),
+('1000032559','IT','BCA',     12,  68112),
+('1000032560','IT','BCA',      6,  33084),
+('1000032570','IT','BCA',     29, 157702),
+('1000032571','IT','BSC',     39, 298662),
+('1000032572','SALES','BSC',  26, 138892),
+('1000032573','SALES','BSC',  43, 422432),
+('1000032574','SALES','BSC',  41, 221892),
+('1000032575','SALES','BSC',  42, 271572),
+('1000032576','SALES','MBA',  19, 121866),
+('1000032577','MKT','MBA',     2,  17474),
+('1000032578','MKT','MBA',    40, 271280);
+
+
+SELECT * FROM EMP_DETAILS
+SELECT * FROM EMP_EXPERIENCE
+
+-- get me gender and education wise taotal salary, where education is "BBA" and salary is 100000 or more
+
+Select left(ED.GENDER,1), EE.EDUCATION, SUM(EE.SALARY) AS TotalSal,
+Case 
+     when SUM(EE.SALARY)>400000 then '4 lak bucket'
+     when SUM(EE.SALARY)>300000 then '3 lak bucket'
+     else 'NA'
+END AS Salbucket
+
+from EMP_DETAILS AS ED
+inner join EMP_EXPERIENCE AS EE
+ON ED.EMP_ID=EE.EMP_ID
+Where EE.EDUCATION='BBA'
+Group by left(ED.GENDER,1), EE.EDUCATION
+Having SUM(EE.SALARY)>=100000
+
+
+----
+
+CREATE TABLE PERF_202001 (
+    ACCOUNT_NUMBER BIGINT PRIMARY KEY,
+    STATUS VARCHAR(5),
+    YEARMO INT
+);
+
+
+CREATE TABLE PERF_202002 (
+    ACCOUNT_NUMBER BIGINT PRIMARY KEY,
+    STATUS CHAR(2),
+    YEARMO INT
+);
+
+
+INSERT INTO PERF_202001
+ (ACCOUNT_NUMBER, STATUS, YEARMO)
+
+VALUES
+(1000032547, 'D', 202001),
+(1000032548, 'D', 202001),
+(1000032549, 'ND', 202001),
+(1000032550, 'ND', 202001),
+(1000032551, 'ND', 202001),
+(1000032552, 'ND', 202001),
+(1000032553, 'D', 202001),
+(1000032554, 'D', 202001),
+(1000032555, 'D', 202001),
+(1000032556, 'ND', 202001),
+(1000032557, 'ND', 202001),
+(1000032558, 'ND', 202001),
+(1000032559, 'D', 202001),
+(1000032560, 'D', 202001),
+(1000032561, 'D', 202001),
+(1000032562, 'D', 202001),
+(1000032563, 'ND', 202001),
+(1000032564, 'ND', 202001),
+(1000032565, 'ND', 202001),
+(1000032566, 'ND', 202001),
+(1000032567, 'ND', 202001),
+(1000032568, 'ND', 202001);
+
+
+INSERT INTO PERF_202002
+(ACCOUNT_NUMBER, STATUS, YEARMO)
+
+VALUES
+(1000032547, 'ND', 202002),
+(1000032548, 'D', 202002),
+(1000032549, 'ND', 202002),
+(1000032550, 'D', 202002),
+(1000032551, 'D', 202002),
+(1000032552, 'ND', 202002),
+(1000032553, 'D', 202002),
+(1000032554, 'ND', 202002),
+(1000032555, 'ND', 202002),
+(1000032556, 'ND', 202002),
+(1000032557, 'D', 202002),
+(1000032558, 'ND', 202002),
+(1000032559, 'D', 202002),
+(1000032560, 'D', 202002),
+(1000032561, 'D', 202002),
+(1000032562, 'D', 202002),
+(1000032563, 'D', 202002),
+(1000032569, 'ND', 202002),
+(1000032570, 'ND', 202002),
+(1000032571, 'ND', 202002),
+(1000032572, 'ND', 202002),
+(1000032573, 'ND', 202002),
+(1000032574, 'ND', 202002);
+
+
+Select * from PERF_202001
+Select * from PERF_202002
+
+Select * from PERF_202001 as J
+inner join PERF_202002 as F
+on J.ACCOUNT_NUMBER=F.ACCOUNT_NUMBER
+WHERE J.STATUS != F.STATUS
+
+Select * from PERF_202001 as J
+Right join PERF_202002 as F
+on J.ACCOUNT_NUMBER=F.ACCOUNT_NUMBER
+Where J.ACCOUNT_NUMBER is null
+
+
+Select J.ACCOUNT_NUMBER from PERF_202001 as J
+Left join PERF_202002 as F
+on J.ACCOUNT_NUMBER=F.ACCOUNT_NUMBER
+Where F.ACCOUNT_NUMBER is null
+
+-------
+
+-- Create table PROD_UNITS
+CREATE TABLE PROD_UNITS (
+    Product VARCHAR(20),
+    City    VARCHAR(30),
+    Units   BIGINT
+);
+
+-- Create table PROD_PRICE
+
+CREATE TABLE PROD_PRICE (
+    PRODUCT VARCHAR(20),
+    CITY    VARCHAR(30),
+    PRICE   BIGINT
+);
+
+-- Insert all rows IN PROD_UNITS
+
+INSERT INTO PROD_UNITS
+ (Product, City, Units)
+ 
+ VALUES
+('APPLE', 'BANGALORE', 16100),
+('APPLE', 'CHENNAI', 89100),
+('APPLE', 'NEW DELHI', 72700),
+('APPLE', 'MUMBAI', 77700),
+('APPLE', 'HYDERABAD', 12500),
+('DELL',  'BANGALORE', 47600),
+('DELL',  'CHENNAI', 84200),
+('DELL',  'NEW DELHI', 44400),
+('DELL',  'MUMBAI', 33800),
+('DELL',  'HYDERABAD', 63000),
+('HP',    'BANGALORE', 28800),
+('HP',    'CHENNAI', 55300),
+('HP',    'NEW DELHI', 86900),
+('HP',    'MUMBAI', 28700),
+('HP',    'HYDERABAD', 44900);
+
+
+-- Insert all rows IN PROD_PRICE
+
+INSERT INTO PROD_PRICE
+ (PRODUCT, CITY, PRICE)
+
+ VALUES
+('APPLE', 'BANGALORE', 90000),
+('APPLE', 'CHENNAI', 92000),
+('APPLE', 'NEW DELHI', 88000),
+('APPLE', 'MUMBAI', 89000),
+('APPLE', 'HYDERABAD', 95000),
+('DELL',  'BANGALORE', 56000),
+('DELL',  'CHENNAI', 50000),
+('DELL',  'NEW DELHI', 49000),
+('DELL',  'MUMBAI', 50000),
+('DELL',  'HYDERABAD', 67000),
+('ASUS',  'BANGALORE', 69000),
+('ASUS',  'CHENNAI', 45000),
+('ASUS',  'NEW DELHI', 78000),
+('ASUS',  'MUMBAI', 89000),
+('ASUS',  'HYDERABAD', 67000);
+
+SELECT * FROM PROD_UNITS
+SELECT * FROM PROD_PRICE
+
+Select U.PRODUCT, Sum(U.UNITS*P.PRICE) AS Sales from PROD_UNITS AS U 
+inner join PROD_PRICE AS P 
+on U.PRODUCT=P.PRODUCT
+AND U.CITY=P.CITY
+--Where U.PRODUCT='APPLE'
+Group by U.PRODUCT
+
+
+
+------------------------
+------------------------
+
+ -- Customers Table
+CREATE TABLE Customers (
+    CustomerID INT,
+    CustomerName VARCHAR(50),
+    City VARCHAR(50)
+);
+
+INSERT INTO Customers VALUES
+(1, 'Alice', 'Delhi'),
+(2, 'Bob', 'Mumbai'),
+(3, 'Charlie', 'Delhi'),
+(4, 'David', 'Chennai');
+
+-- Orders Table
+CREATE TABLE Orders (
+    OrderID INT,
+    CustomerID INT,
+    Product VARCHAR(50),
+    Amount INT
+);
+
+INSERT INTO Orders VALUES
+(101, 1, 'Laptop', 50000),
+(102, 2, 'Mobile', 20000),
+(103, 1, 'Tablet', 15000),
+(104, 5, 'Monitor', 10000);  
+
+-- Products Table
+CREATE TABLE Products (
+    ProductName VARCHAR(50),
+    Price INT
+);
+
+INSERT INTO Products VALUES
+('Laptop', 50000),
+('Mobile', 20000),
+('Tablet', 15000),
+('Headphones', 3000);
+
+-- Q1: Get the list of customers who placed orders with product and amount details.
+
+SELECT 
+    c.CustomerID,
+    o.Product,
+    o.Amount
+FROM 
+    Customers As c
+INNER JOIN 
+    Orders As o
+ON 
+    c.CustomerID = o.CustomerID;
+
+
+
+-- 2. Get all customer names and their order details only for orders above ₹20,000.
+
+SELECT 
+    c.CustomerName,
+    o.Product,
+    o.Amount
+FROM 
+    Customers AS c
+INNER JOIN 
+    Orders As o
+ON 
+    c.CustomerID = o.CustomerID
+WHERE 
+    o.Amount > 20000;
