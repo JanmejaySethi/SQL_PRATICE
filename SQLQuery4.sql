@@ -1646,3 +1646,90 @@ ON
     c.CustomerID = o.CustomerID
 WHERE 
     o.Amount > 20000;
+
+--------------------------------------
+
+CREATE TABLE SELF_JOIN_DATA (
+    EMP_NAME      VARCHAR(20) NOT NULL,
+    EMP_ID        INT         NOT NULL,
+    MANAGER_NAME  VARCHAR(20) NOT NULL,
+    MANAGER_ID    INT         NOT NULL,
+    PRIMARY KEY (EMP_ID)
+);
+
+
+INSERT INTO SELF_JOIN_DATA
+  (EMP_NAME, EMP_ID, MANAGER_NAME, MANAGER_ID)
+ VALUES
+('BLAKE',  7698, 'KING',  7839),
+('CLARK',  7782, 'KING',  7839),
+('JONES',  7566, 'KING',  7839),
+
+('MARTIN', 7654, 'BLAKE', 7698),
+('ALLEN',  7499, 'BLAKE', 7698),
+('TURNER', 7844, 'BLAKE', 7698),
+('JAMES',  7900, 'BLAKE', 7698),
+('WARD',   7521, 'BLAKE', 7698),
+
+('FORD',   7902, 'JONES', 7566),
+('SMITH',  7369, 'FORD',  7902),
+
+('SCOTT',  7788, 'JONES', 7566),
+('ADAMS',  7876, 'SCOTT', 7788),
+
+('MILLER', 7934, 'CLARK', 7782);
+
+
+SELECT * FROM SELF_JOIN_DATA
+
+select C1.EMP_NAME, C1.MANAGER_NAME, C2.MANAGER_NAME as M_M_NAME from 
+SELF_JOIN_DATA AS C1
+Inner join SELF_JOIN_DATA AS C2
+On C1.MANAGER_ID= C2.EMP_ID
+
+
+--------------------------
+
+create table OrderS(
+   Id                   int                  ,
+   OrderDate            datetime             not null,
+   OrderNumber          nvarchar(10)         ,
+   CustomerId           int                  not null,
+   TotalAmount          decimal(12,2)        
+   )
+
+   insert into OrderS Values
+(1,'07-04-2012',542378,85,440),
+(2,'07-04-2012',542379,79,1863.4),
+(3,'07-04-2012',542380,34,1813),
+(4,'07-04-2012',542381,84,670.8),
+(5,'07-05-2012',542382,79,3730),
+(6,'07-05-2012',542383,34,1444.8),
+(7,'07-05-2012',542384,14,625.2),
+(8,'07-05-2012',542385,68,2490.5),
+(9,'07-06-2012',542386,88,517.8),
+(10,'07-06-2012',542387,79,1119.9),
+(11,'07-06-2012',542388,20,2018.6),
+(12,'07-06-2012',542389,85,2018.6)
+
+Select * from OrderS
+-- which all customer did continues 2 days transctions 
+
+Select C1.CustomerId, C1.OrderDate as Day1, C2.OrderDate as Day2 from OrderS AS C1
+Inner join OrderS AS C2
+On C1.CustomerId=C2.CustomerId
+AND Dateadd(day, 1,C1.OrderDate) = C2.OrderDate
+
+-- which all customer did continues 3 days transctions 
+
+
+Select C1.CustomerId, C1.OrderDate as Day1,
+C2.OrderDate as Day2,
+C3.OrderDate as day3
+from OrderS as C1
+inner join OrderS AS C2
+ON C1.CustomerId=C2.CustomerId
+AND dateadd(day,1,C1.OrderDate)=C2.OrderDate
+Inner join OrderS AS C3
+on C2.CustomerId=C3.CustomerId
+AND dateadd(day,1,C2.OrderDate)=C3.OrderDate
