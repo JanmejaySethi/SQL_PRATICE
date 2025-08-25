@@ -1733,3 +1733,121 @@ AND dateadd(day,1,C1.OrderDate)=C2.OrderDate
 Inner join OrderS AS C3
 on C2.CustomerId=C3.CustomerId
 AND dateadd(day,1,C2.OrderDate)=C3.OrderDate
+
+------------------------
+
+Create Table PRODUCT_N
+(
+ [Id] int,
+ [Name] nvarchar(50),
+ [Description] nvarchar(250)
+)
+
+Create Table PRODUCTSALES_N
+(
+ Id int ,
+ ProductId int,
+ UnitPrice int,
+ QuantitySold int
+)
+
+Insert into PRODUCT_N values (null,'TV', '52 inch black color LCD TV')
+Insert into PRODUCT_N values (null,'Laptop', 'Very thin black color acer laptop')
+Insert into PRODUCT_N values (1,'Desktop', 'HP high performance desktop')
+Insert into PRODUCT_N values (2,'Radio', 'HP high performance Radio')
+
+Insert into PRODUCTSALES_N values(1,null, 450, 5)
+Insert into PRODUCTSALES_N values(2,2, 250, 7)
+Insert into PRODUCTSALES_N values(3,null, 450, 4)
+Insert into PRODUCTSALES_N values(4,3, 450, 9)
+Insert into PRODUCTSALES_N values(5,1, 450, 9)
+Insert into PRODUCTSALES_N values(6,1, 450, 9)
+
+Select * from PRODUCT_N
+Select * from PRODUCTSALES_N
+
+Select ProductId, Sum(QuantitySold) as totalQSa from PRODUCTSALES_N
+Group by ProductId
+
+Select P.Name, sum(S.QuantitySold) as totalQSa  from PRODUCT_N AS P
+inner join PRODUCTSALES_N AS S
+on P.Id=S.ProductId
+Group by P.Name
+
+
+Select P.Name, sum(S.QuantitySold) as totalQSa  from PRODUCT_N AS P
+left join PRODUCTSALES_N AS S
+on P.Id=S.ProductId
+Group by P.Name
+
+
+-- Order BY -- Sorts the result 
+
+Select P.Name, sum(S.QuantitySold) as totalQSa  from PRODUCT_N AS P
+left join PRODUCTSALES_N AS S
+on P.Id=S.ProductId
+Group by P.Name
+Order by totalQSa Desc, Name ASC
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+use OrderDB;
+
+Select Count(Id) from Customer
+-- 91
+-- Sales 
+Select Sum(totalamount)  AS TOTAL_REVENUE from [dbo].[Order]
+
+select (FirstName+Space(1)+LastName) as C_NAME , Count(O.ID) 
+From Customer AS C Inner JOIN [ORDER] AS O
+ON C.ID=O.CustomerID
+group by (FirstName+Space(1)+LastName)
+
+
+select C.ID, (FirstName+Space(1)+LastName) as C_NAME , Count(O.ID) as TotalOrder , SUM(O.[TotalAmount]) as Sales
+From Customer AS C Inner JOIN [ORDER] AS O
+ON C.ID=O.CustomerID
+group by C.ID,(FirstName+Space(1)+LastName)
+
+
+--segment the customer 
+-- Get me a cutstomer and his segment cnt transaction and amount  
+-- 10 Transaction and 10000 i like Gold 
+-- 10 Transactions OR 10000 i like Silver 
+-- 10 trsanction No and No 10000 then branze 
+
+Gold  20
+Silver 30 
+Branze 40
+-- Not going to work
+-- 
+Select 
+[CustomerId],
+Case 
+	when Count(ID)>=10 AND SUm([TotalAmount])>=10000 Then 'Gold'
+	when Count(ID)>=10 OR SUm([TotalAmount])>=10000 Then 'Silver'
+	when Count(ID)<10 AND SUm([TotalAmount])<10000 Then 'Branze'
+	Else 'NA'
+END  AS Customer_Segment,
+Count([CustomerId]) as cnt,
+SUm([TotalAmount]) as amount
+From [dbo].[Order]
+group by 
+[CustomerId]
+
+select * from [dbo].[Product] as P 
+left join [dbo].[OrderItem] AS OI 
+on P.Id=OI.ProductId
+Where OI.Id is null
+
+
+select P.Id, COunt(OI.ID) from [dbo].[Product] as P 
+left join [dbo].[OrderItem] AS OI 
+on P.Id=OI.ProductId
+group by P.Id
+Having COunt(OI.ID)=0
+
+
+
