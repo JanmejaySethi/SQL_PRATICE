@@ -1850,4 +1850,183 @@ group by P.Id
 Having COunt(OI.ID)=0
 
 
+Select 
+C.Id as Customer_ID,
+C.FirstName,
+C.LastName,
+C.Country as customer_country,
+C.City,
+C.Phone as Customer_Phone,
+O.Id as ORDERID,
+O.OrderDate,
+O.OrderNumber,
+O.TotalAmount,
+OI.Id,
+OI.ProductId,
+OI.Quantity,
+OI.UnitPrice,
+P.IsDiscontinued,
+P.Package,
+P.ProductName,
+P.SupplierId,
+P.UnitPrice,
+S.City,
+S.CompanyName,
+S.Country,
+S.ContactName,
+S.Fax,
+S.Phone as Supplier_Phone
+from Customer AS C
+inner join [dbo].[Order] AS O
+on C.Id=O.CustomerId
+Inner join [dbo].[OrderItem] as OI
+on O.Id=OI.OrderId
+Inner join Product as P
+on OI.ProductId=P.Id
+Inner join Supplier as S
+on P.SupplierId=S.Id
+Order by ProductId
+--Where C.id=1
+
+----------------
+
+-- SET_Operators 
+-- Union 
+-- Union All
+-- Except 
+-- Intersect 
+
+-- Union 
+create table tblindiacustomer (
+id int,
+Name nVarchar(100),
+Email nVarchar(100)
+)
+
+insert into tblindiacustomer 
+values (1, 'Raj', 'Raj@gmail.com'),
+ (2, 'Sam', 'Sam@gmail.com'),
+(3, 'Sam', 'Sam@gmail.com')
+
+create table tblUScustomer (
+id int,
+Name nVarchar(100),
+Email nVarchar(100)
+)
+insert into tblUScustomer values 
+(1, 'Ben', 'Ben@gmail.com'),
+(2, 'Sam', 'Sam@gmail.com')
+
+CONDITION OF Set operation 
+-- No of column same and datatype should be same 
+
+-- Union all keep duplicate and union remove duplicate
+-- Union will give result in a sorted order 
+-- Union is faster then union all 
+
+Select id, Name, Email from tblindiacustomer
+union ALL
+Select id, Name, Email from tblUScustomer
+
+
+Select id, Name, Email from tblindiacustomer
+union
+Select id, Name, Email from tblUScustomer
+
+
+-- intersection 
+ 
+ 
+Select id, Name, Email from tblindiacustomer
+--Intersect
+Select id, Name, Email from tblUScustomer
+
+Select id, from tblindiacustomer
+Intersect
+Select id from tblUScustomer
+
+--except   -- in first table not in 2nd table
+
+ 
+Select id, Name, Email from tblindiacustomer
+Except
+Select id, Name, Email from tblUScustomer
+
+Select id from tblindiacustomer
+Except
+Select id from tblUScustomer
+
+
+
+
+Select id from tblUScustomer
+Except
+Select id from tblindiacustomer
+
+
+
+
+-- sales / probelm / late 
+-- Bnaglore   -- SQL SErver
+union 
+-- Hyd        -- SQL SErver
+union
+-- Chy        -- SQL SErver
+
+-- Union Except and intersect -- Duplicate / Sort 
+-- union union all -- union all 
+-- no of column and respective datatype should be same 
+
+create table tblUKcustomer (
+id int,
+Name nVarchar(100),
+Email nVarchar(100)
+)
+insert into tblUKcustomer values 
+(1, 'Ben', 'Ben@gmail.com'),
+(2, 'Ram', 'Ram@gmail.com')
+
+--insert into tblUKcustomer values(2, 'Ram', 'Ram@gmail.com')
+
+
+Select id, Name, Email from tblindiacustomer
+Select id, Name, Email from tblUScustomer
+Select id, Name, Email from tblUKcustomer
+
+
+Select id, Name, Email from tblindiacustomer
+union all
+Select id, Name, Email from tblUScustomer
+Union ALL
+Select id, Name, Email from tblUKcustomer
+
+
+Select id, Name, Email from tblindiacustomer
+union 
+Select id, Name, Email from tblUScustomer
+Union 
+Select id, Name, Email from tblUKcustomer
+
+
+Select id, Name, Email from tblindiacustomer
+intersect 
+Select id, Name, Email from tblUScustomer
+Intersect 
+Select id, Name, Email from tblUKcustomer
+
+
+Select id, Name, Email from tblindiacustomer
+Except 
+Select id, Name, Email from tblUScustomer
+Except 
+Select id, Name, Email from tblUKcustomer
+
+
+
+(Select id, Name, Email from tblindiacustomer
+union 
+Select id, Name, Email from tblUScustomer)
+intersect 
+Select id, Name, Email from tblUKcustomer
+
 
