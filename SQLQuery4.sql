@@ -2030,3 +2030,487 @@ intersect
 Select id, Name, Email from tblUKcustomer
 
 
+
+create table Set1(
+S1_ID int
+)
+insert into Set1 Values(1)
+insert into Set1 Values(1)
+insert into Set1 Values(2)
+insert into Set1 Values(3)
+insert into Set1 Values(4)
+insert into Set1 Values(4)
+insert into Set1 Values(null)
+
+create table Set2(
+S2_ID int
+)
+insert into Set2 Values(1)
+insert into Set2 Values(2)
+insert into Set2 Values(2)
+insert into Set2 Values(3)
+insert into Set2 Values(5)
+insert into Set2 Values(5)
+insert into Set2 Values(null)
+
+
+create table Set3(
+S3_ID int
+)
+insert into Set3 Values(1)
+insert into Set3 Values(2)
+insert into Set3 Values(2)
+insert into Set3 Values(3)
+insert into Set3 Values(5)
+insert into Set3 Values(5)
+insert into Set3 Values(null)
+insert into Set3 Values(null)
+
+
+Select * from Set1
+Select * from Set2
+Select * from Set3
+
+-- Distinct -- All are same 
+-- unique -- All nulls are same 
+-- join -- as its defination 
+-- Agg -- ignore the null 
+-- Set -- All nulls are same 
+
+
+Select * from Set1
+union 
+Select * from Set2
+union 
+Select * from Set3
+
+Select * from Set1
+union ALl
+Select * from Set2
+union All
+Select * from Set3
+
+-- Get me Product which is not sold at all 
+-- join and Set 
+-- get me customer who didn't ordered at all
+-- Join and set 
+
+-- USING JOIN
+SELECT * FROM [dbo].[OrderItem] AS OI
+RIGHT JOIN [dbo].[Product] AS P
+ON
+OI.PRODUCTID = P.ID
+WHERE OI.ORDERID IS NULL
+
+
+-- USING SET
+SELECT ID FROM [dbo].[Product]
+EXCEPT
+SELECT PRODUCTID  FROM [dbo].[OrderItem]
+
+-----------------------
+
+Select * from Set2
+union all
+Select * from Set1
+union all
+Select * from Set3
+
+
+Select * from Set2
+union
+Select * from Set1
+union
+Select * from Set3
+
+
+Select * from Set2
+except
+Select * from Set1
+intersect
+Select * from Set3
+
+--Intersect 
+--Union Except
+
+Select * from Set1 as S1
+inner join Set2 as S2
+on S1.S1_ID<>S2.S2_ID
+inner join Set3 as S3 
+on S1.S1_ID<=S3.S3_ID
+
+
+----------
+
+create table Matches (
+Team varchar(100)
+)
+
+Insert into Matches
+ (TEAM)
+values
+('RCB'),
+('MI'),
+('CSK'),
+('SRH')
+
+
+SELECT M1.TEAM AS TEAM1, M2.TEAM AS TEAM2 FROM MATCHES AS M1
+CROSS JOIN MATCHES AS M2
+WHERE M1.TEAM>M2.TEAM
+
+
+
+-----------------------------------------------
+-----------------------------------------------
+
+
+Select * from EMPLOYEE
+
+-- 2nd max salary 
+
+Select Max(Salary) from EMPLOYEE
+Where Salary<(Select Max(Salary) from EMPLOYEE)
+
+
+
+-- 3rd highest salary  -- 3570
+Select Max(Salary) from EMPLOYEE
+where Salary<(Select Max(Salary) from EMPLOYEE
+Where Salary<(Select Max(Salary) from EMPLOYEE))
+Order by Max(Salary)
+
+-- Order by sorting the result 
+
+
+Select Max(Salary) from EMPLOYEE
+	where Salary<
+		(Select Max(Salary) from EMPLOYEE
+			Where Salary<
+				(Select Max(Salary) from EMPLOYEE))
+Order by Max(Salary)
+
+-- Scalar value 
+-- multi valued sub quesry 
+-- Table value sub quesry 
+
+Select Max(salary) from EMPLOYEE
+WHere Salary!=(Select Max(salary) from EMPLOYEE)
+
+-- if sub quer gives u one row of result then it is called sclar valued sub q
+
+
+--How many units/ Quntity of Chai is sold 
+
+
+-- How many Qunty of Konbu is sold 
+
+Select Sum(Quantity) from [dbo].[OrderItem]
+where ProductId=(
+Select Id from Product
+WHere ProductName='Konbu')
+
+
+
+
+-- get me total no of units sold on Supplier "Exotic Liquids"
+
+
+select sum(Quantity) from [dbo].[OrderItem]
+Where ProductId in (select Id from Product Where SupplierId=     -- multi valued sub query 
+(Select Id from Supplier where CompanyName='Exotic Liquids')     -- Scalare or single valued sub Q
+)
+
+select sum(Quantity) from [dbo].[OrderItem] as Oi 
+inner join Product as P on P.Id=Oi.ProductId
+inner join Supplier as S on S.Id=P.SupplierId
+where CompanyName='Exotic Liquids'
+
+
+
+
+select * from [dbo].[OrderItem]
+Where ProductId in (select Id from Product Where SupplierId in     -- multi valued sub query 
+(Select Id from Supplier )     -- Scalare or single valued sub Q
+)
+
+select * from [dbo].[OrderItem] as Oi 
+inner join Product as P on P.Id=Oi.ProductId
+inner join Supplier as S on S.Id=P.SupplierId
+--where CompanyName='Exotic Liquids'
+
+-- Sub quesry can be repleced with Joins 
+
+-- 1 table 1M    2nd has 1000 records -- SubQ
+-- 1M    0.5  -- joins 
+
+
+
+select sum(Quantity) from [dbo].[OrderItem]
+Where ProductId in (1,
+2,
+3)
+
+
+
+
+Select sum(UnitPrice) 
+from 
+(select 
+oi.OrderId,
+oi.Id as OID,
+P.Id as PID,
+Oi.UnitPrice ,
+S.CompanyName
+from [dbo].[OrderItem] as Oi 
+inner join Product as P on P.Id=Oi.ProductId
+inner join Supplier as S on S.Id=P.SupplierId) AS A   -- Table valued sub query 
+
+Only one column 
+Single valued = != 
+Multi valued in not in 
+
+Table valued SQ -- more thenone column tahta will act like a table 
+From u must have aliace name 
+
+
+
+
+Create Table tblProducts_subQ
+(
+ [Id] int identity primary key,
+ [Name] nvarchar(50),
+ [Description] nvarchar(250)
+)
+
+Create Table tblProductSales_SubQ
+(
+ Id int primary key identity,
+ ProductId int foreign key references tblProducts_subQ(Id),
+ UnitPrice int,
+ QuantitySold int
+)
+
+Insert into tblProducts_subQ values ('TV', '52 inch black color LCD TV')
+Insert into tblProducts_subQ values ('Laptop', 'Very thin black color acer laptop')
+Insert into tblProducts_subQ values ('Desktop', 'HP high performance desktop')
+
+Insert into tblProductSales_SubQ values(3, 450, 5)
+Insert into tblProductSales_SubQ values(2, 250, 7)
+Insert into tblProductSales_SubQ values(3, 450, 4)
+Insert into tblProductSales_SubQ values(3, 450, 9)
+
+Select * from tblProducts_subQ
+Select * from tblProductSales_SubQ
+
+-- total quntisold product TV 
+-- join 
+
+select sum(QuantitySold) from tblProductSales_SubQ as S
+inner join tblProducts_subQ as P 
+on S.Productid=P.Id
+WHere P.Name='Laptop'
+
+
+select sum(QuantitySold) from tblProductSales_SubQ 
+Where Productid=(Select id from tblProducts_subQ where name='Laptop')
+
+-- get a productid which is not sold at all 
+
+-- Joins 
+-- SUBQ
+-- Set operators 
+
+-- joins 
+select P.* from tblProductSales_SubQ as S
+Right join tblProducts_subQ as P 
+on S.ProductId=P.Id
+Where S.id is null
+
+-- SubQ
+select * from tblProducts_subQ
+where id not in (Select distinct Productid from tblProductSales_SubQ)
+
+-- Set opeartors 
+Select * from tblProducts_subQ where Id=
+(select id from tblProducts_subQ
+Except 
+Select Productid from tblProductSales_SubQ)
+
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+
+-- SIngle Sclared value 
+-- Multi vaued 
+-- Table value  -- more ten one column it will act like other table 
+
+
+
+Select * from 
+(Select * from tblProductSales_SubQ Where Id>2) A
+
+
+
+CREATE TABLE EMPLOYEE_SUBQ
+(
+   EmpCode      INT Primary Key,
+   EmpFName     VARCHAR(15),
+   EmpLName     VARCHAR(15),
+   Job          VARCHAR(45),
+   Manager      VARCHAR(4),
+   HireDate     DATE,
+   Salary       INT,
+   Commission   INT,
+   DEPTCODE     INT
+);
+
+
+INSERT INTO EMPLOYEE_SUBQ
+VALUES (9369, 'TONY', 'STARK', 'SOFTWARE ENGINEER', 7902, '1980-12-17', 2800,0,20),
+       (9499, 'TIM', 'ADOLF', 'SALESMAN', 7698, '1981-02-20', 1600, 300,30),    
+       (9566, 'KIM', 'JARVIS', 'MANAGER', 7839, '1981-04-02', 3570,0,20),
+       (9654, 'SAM', 'MILES', 'SALESMAN', 7698, '1981-09-28', 1250, 1400, 30),
+       (9782, 'KEVIN', 'HILL', 'MANAGER', 7839, '1981-06-09', 2940,0,10),
+       (9788, 'CONNIE', 'SMITH', 'ANALYST', 7566, '1982-12-09', 3000,0,20),
+       (9839, 'ALFRED', 'KINSLEY', 'PRESIDENT', 7566, '1981-11-17', 5000,0, 10),
+       (9844, 'PAUL', 'TIMOTHY', 'SALESMAN', 7698, '1981-09-08', 1500,0,30),
+       (9876, 'JOHN', 'ASGHAR', 'SOFTWARE ENGINEER', 7788, '1983-01-12',3100,0,20),
+       (9900, 'ROSE', 'SUMMERS', 'TECHNICAL LEAD', 7698, '1981-12-03', 2950,0, 20),
+       (9902, 'ANDREW', 'FAULKNER', 'ANALYST', 7566, '1981-12-03', 3000,0, 10),
+       (9934, 'KAREN', 'MATTHEWS', 'SOFTWARE ENGINEER', 7782, '1982-01-23', 3300,0,20),
+       (9591, 'WENDY', 'SHAWN', 'SALESMAN', 7698, '1981-02-22', 500,0,30),
+       (9698, 'BELLA', 'SWAN', 'MANAGER', 7839, '1981-05-01', 3420, 0,30),
+       (9777, 'MADII', 'HIMBURY', 'ANALYST', 7839, '1981-05-01', 2000, 200, NULL),
+       (9860, 'ATHENA', 'WILSON', 'ANALYST', 7839, '1992-06-21', 7000, 100, 50),
+       (9861, 'JENNIFER', 'HUETTE', 'ANALYST', 7839, '1996-07-01', 5000, 100, 50);
+
+
+CREATE TABLE DEPARTMENT_SUBQ
+(
+   DEPTCODE   INT Primary Key,
+   DeptName   Varchar(30),
+   LOCATION   VARCHAR(33)
+);
+
+  INSERT INTO DEPARTMENT_SUBQ VALUES (10, 'FINANCE', 'EDINBURGH'),
+                              (20,'SOFTWARE','PADDINGTON'),
+                              (30, 'SALES', 'MAIDSTONE'),
+                              (40,'MARKETING', 'DARLINGTON'),
+                              (50,'ADMIN', 'BIRMINGHAM');
+
+Select * from EMPLOYEE_SUBQ
+Select * from DEPARTMENT_SUBQ
+
+--get me all the emp details who's department is SORTWARE
+
+Select * from EMPLOYEE_SUBQ where DEPTCODE=(select DEPTCODE from DEPARTMENT_SUBQ Where DEPTNAME='SOFTWARE')
+
+
+Select * from EMPLOYEE_SUBQ where DEPTCODE in (select DEPTCODE from DEPARTMENT_SUBQ Where DEPTNAME in ('SOFTWARE', 'FINANCE'))
+
+any   OR 
+All   AND 
+
+-- i want  list of Emp Who's salary is more any one of the TONY TIM
+
+Select * from EMPLOYEE_SUBQ Where Salary> 2800 OR Salary> 1600
+
+Select * from EMPLOYEE_SUBQ Where Salary> (Select Salary from EMPLOYEE_SUBQ where EmpFName='TONY')
+                                OR Salary> (Select Salary from EMPLOYEE_SUBQ where EmpFName='TIM')
+
+
+Select * from EMPLOYEE_SUBQ Where Salary > ANY (Select Salary from EMPLOYEE_SUBQ where EmpFName in ('TONY','TIM' ))
+
+
+WENDY
+SAM
+TIM
+
+1600>2800
+or 1600>1600
+
+MADII
+
+
+Select * from EMPLOYEE_SUBQ Where Salary> 2800 AND Salary> 1600
+
+Select * from EMPLOYEE_SUBQ Where Salary> (Select Salary from EMPLOYEE_SUBQ where EmpFName='TONY')
+                                AND Salary> (Select Salary from EMPLOYEE_SUBQ where EmpFName='TIM')
+
+
+Select * from EMPLOYEE_SUBQ Where Salary > ALL (Select Salary from EMPLOYEE_SUBQ where EmpFName in ('TONY','TIM' ))
+
+-- Error 
+Select * from EMPLOYEE_SUBQ
+Where EmpCode in (Select EmpCode, EmpFname from EMPLOYEE_SUBQ where Salary>3000)
+
+
+-- COrrelated SubQuesry 
+-- inner Quesry / Nested Quesry / Sub QUesry will be dependent on outer QUesry 
+
+Select * from tblProducts_subQ
+Select * from tblProductSales_SubQ
+
+Select Name , Sum(QuantitySold)
+from tblProducts_subQ as P left join 
+tblProductSales_SubQ AS S on 
+P.id=S.ProductId
+Group by Name
+
+
+Select Name,
+(Select Sum(QuantitySold) from tblProductSales_SubQ Where ProductId=2)
+from tblProducts_subQ
+
+tblProducts_subQ
+1	TV	52 inch black color LCD TV
+2	Laptop	Very thin black color acer laptop
+
+TV Null
+Laptop 7
+
+
+-- get me product id which is not sold 
+-- join 
+-- Except -- Set op[erators 
+-- Sub QUesry Not in 
+
+Select ID from [dbo].[Product] as P
+where not Exists  
+(Select * From OrderItem  as OI Where OI.ProductId=P.Id)
+
+--segment the customer 
+-- Get me a cutstomer and his segment cnt transaction and amount  
+-- 10 Transaction and 10000 i like Gold 
+-- 10 Transactions OR 10000 i like Silver 
+-- 10 trsanction No and No 10000 then branze 
+
+--Customer, Total Transaction  Total amount 
+
+
+Select C.*, O.*,
+Case 
+	when O.Total_Transactio>=10 And O.To_Sales>=10000 Then 'Gold'
+	when O.Total_Transactio>=10 OR O.To_Sales>=10000 Then 'Silver'
+	when O.Total_Transactio<10 AND O.To_Sales<10000 Then 'Branze'
+	ELSE 'NA' 
+END as Customer_Seg
+from Customer AS C
+inner join 
+(Select CustomerId, 
+Count(id) as Total_Transactio,
+Sum(TotalAmount) as To_Sales
+from [dbo].[Order]
+Group by CustomerId) AS O
+on C.Id=O.CustomerId
+Order by C.Id
+
+	
+-------------------------------------------------------
+-------------------------------------------------------	
+
+Select *,
+Salary/Sum(Salary) as '% Share'
+from EMPLOYEE_SUBQ
