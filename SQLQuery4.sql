@@ -2856,3 +2856,24 @@ Row_number() Over(Order by Salary Desc) as RN,
 Dense_RANK() Over(Order by Salary Desc) as DR,
 RANK() Over(Order by Salary Desc) as RR
 from EMPLOYEE_SUBQ
+
+
+--------------------------------------------------
+--------------------------------------------------
+
+
+-- 3rd highest salary 
+
+Select Max(Salary) from EMPLOYEE
+where Salary<(Select Max(Salary) from EMPLOYEE
+Where Salary<(Select Max(Salary) from EMPLOYEE))
+
+
+Select * From
+(
+Select *,
+DENSE_RANK() OVER(Order by Salary desc) AS DR
+from EMPLOYEE) A
+Where DR = 3
+
+
