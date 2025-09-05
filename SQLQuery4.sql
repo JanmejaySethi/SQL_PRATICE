@@ -2511,6 +2511,348 @@ Order by C.Id
 -------------------------------------------------------
 -------------------------------------------------------	
 
+-- window functions
+
+
+Select *, Round((Cast(Salary as Decimal(10,2))/Cast(Sumsalary as Decimal(10,2)))*100,2) as Percentage_Contr from EMPLOYEE_SUBQ
+Cross join
+(Select Sum(salary) as Sumsalary  from EMPLOYEE_SUBQ) AS Sales
+
+Step 1  -- Sales  Sumsalary one row 51930 
+Step2  -- from EMPLOYEE_SUBQ
+Step 3 Cross join  E.*+ Sales*
+Step 4 Select *
+
+select 2800.00 /51930
+        Decimal  Int
+
+		/*
+Syntax
+Window_Functions(Expression)
+OVER([Partition by Cluse Experssions ]
+     [ORDER by Cluse Experssions ]
+	 ROW or RANGES Clause
+*/
+
+
+Select EmpCode, EmpFName, EmpLName, JOB, Manager, Salary, Commission,
+Sum(Salary) Over() as SumSal
+from EMPLOYEE_SUBQ
+
+-- I want Each Emp Contribution with respect to JOB Title 
+
+
+Select A.*, B.Sumsal from EMPLOYEE_SUBQ as A
+inner join
+(Select JOB, SUm(salary) as Sumsal from EMPLOYEE_SUBQ
+group by JOB) AS B
+on A.Job=B.Job
+
+---
+
+-- Using Join
+
+Select A.*, B.Sumsal, ((Cast(Salary as decimal(10,2))/Cast(Sumsal as decimal(10,2)))*100) as PerCont from EMPLOYEE_SUBQ AS A
+inner join
+(Select JOB, SUm(salary) as Sumsal from EMPLOYEE_SUBQ
+group by JOB) AS B
+ON A.JOB=B.JOB
+
+
+---- Using corelated SubQuery
+
+Select * , ((Cast(Salary as decimal(10,2))/Cast(Sumsal as decimal(10,2)))*100) as PerCount
+from 
+(
 Select *,
-Salary/Sum(Salary) as '% Share'
+(Select SUm(salary) from EMPLOYEE_SUBQ
+Where JOB=A.Job
+group by JOB) as Sumsal
+from EMPLOYEE_SUBQ AS A
+) B
+
+
+-- Window Function 
+
+
+Select *,
+Cast(salary as Decimal(10,2))/Cast(sumSalary_All_rows_as_window as Decimal(10,2))*100 as Per_Contru_All,
+Cast(salary as Decimal(10,2))/Cast(sumSalary_JOB_Window as Decimal(10,2))*100 as Per_Contru_JOB
+From
+(Select *,
+Sum(salary) OVER() as sumSalary_All_rows_as_window,
+Sum(salary) OVER(Partition by JOB) as sumSalary_JOB_Window
+from EMPLOYEE_SUBQ) AS EMP
+
+-- Types of window functions 
+-- Aggregated Sum min Max Avg Count 
+-- Ranking Window -- RANK denseRank Rownumber 
+-- Valued Windo function 
+-- Lead lag 
+
+-- i want 
+
+Select Distinct Country from [dbo].[Customer]
+cross join
+Select Count(Id) as totalCustomers from [dbo].[Customer]
+inner join
+select Country, Count(Id) from [dbo].[Customer]
+Group by Country
+
+
+Select CP.Country,
+ (cast(CP.People AS Decimal(10,2))/ cast(CT.Total AS Decimal(10,2)) * 100) AS Percentage
+ FROM
+ (
+ Select Country, Count(Id) AS People from [dbo].[Customer]
+   Group BY Country
+) AS CP
+Inner join
+(
+ Select Count(Id) AS Total From [dbo].[Customer]
+) AS CT
+ON cp.country=country;
+
+
+--- window function
+
+Select Country, Cast(totalCustomers_Country as decimal(10,2))/Cast(totalCustomers as decimal(10,2))*100
+From
+(Select Distinct Country,
+Count(Id) Over() as totalCustomers,
+Count(Id) Over(Partition by Country) as totalCustomers_Country
+from [dbo].[Customer]) AS A
+
+--
+--segment the customer 
+-- Get me a cutstomer and his segment cnt transaction and amount  
+--  Transaction is more then Avg Transaction  and Amount is more then avg i like Gold 
+-- 10 Transactions OR 10000 i like Silver 
+-- 10 trsanction No and No 10000 then branze 
+
+-- 
+--Select Customer_ID,COunt(Transa), Sum(amount), Avg(tran), Avg(amount) Status 
+
+Select *,
+Case 
+     when TAmount>=AVG_Amount AND TTran>=AVG_Trans Then 'GOLD'
+	 when TAmount>=AVG_Amount OR TTran>=AVG_Trans Then 'Silver'
+	 when TAmount<AVG_Amount AND TTran<AVG_Trans Then 'Branze'
+	 ELSE 'NA'
+END as Customer_Segment
+from 
+(
+Select *,
+Avg(TAmount) OVER() as AVG_Amount,
+AVG(TTran) OVER() AS AVG_Trans
+from 
+(
+Select CustomerId, 
+    sum([TotalAmount]) as TAmount,
+	Count([Id]) as TTran
+from [Order]
+Group by CustomerId
+)AS A
+) AS B
+
+
+
+
+----------------------------------------
+----------------------------------------
+
+-- how window function works 
+-- Agg Window 
+-- Ranking Window 
+-- Valued Windo function
+
+-- Agg -- Select Group Sum 
+-- Group by or u just sum()
+-- Agg partition by 
+
+Select *,
+Sum(Salary) OVER() As TotalSal ,
+Sum(Salary) Over(Partition by JOb) AS JobTotalSal,
+Max(Salary) Over(Partition by JOb) AS MaxSal
+from EMPLOYEE_SUBQ
+
+
+Select *,
+Sum(Salary) OVER() As TotalSal ,
+Sum(Salary) Over(Partition by JOb) AS JobTotalSal,
+Sum(Salary) OVER(Order by EmpFName) as RunningTotal, -- Range between Unbounded preceding and Current rows 
+Sum(Salary) Over(Partition by JOB Order by EmpFName) as runningtoalbyjob
+from EMPLOYEE_SUBQ
+
+
+-- Product wise sum of sales 
+-- Product Name , Sum(sales)
+
+
+Select *,
+sum(Sales) Over(Order by Sales Desc) as Running_Total
+from
+(select P.ProductName, Sum(OI.UnitPrice* Quantity) AS SAles	 from Product AS P 
+inner join OrderItem as OI 
+on P.Id=OI.ProductId
+Group by ProductName) AS PS
+
+
+
+-- How many Min number customers Contribute 80% Sales 
+
+-- running total of sales from decending order 
+-- 36
+Select Count(*)
+from (
+Select *,
+sum(Sales) Over(Order by Sales Desc) as Running_Total,
+Sum(Sales) Over() as TotalSales
+from
+(select P.ProductName, Sum(OI.UnitPrice* Quantity) AS SAles	 from Product AS P 
+inner join OrderItem as OI 
+on P.Id=OI.ProductId
+Group by ProductName) AS PS
+) AS RT
+Where (Running_Total/TotalSales)*100<=81
+
+-- Window Functions 
+-- Aggrigated Window 
+-- Ranking 
+-- Valued Window Fun
+-- Aggrigated Window 
+-- Group by 
+-- 
+
+Select Job, sum(Salary) as Sumsal
+from EMPLOYEE_SUBQ
+Group by Job
+
+ANALYST	20000
+MANAGER	9930
+PRESIDENT	5000
+SALESMAN	4850
+SOFTWARE ENGINEER	9200
+TECHNICAL LEAD	2950
+
+Select *, (Cast(Salary as decimal(10,2))/SumSal)*100 as PerShare
+---             Int                        int 
+---          Explicit Convert            Implicitly        
+From 
+(
+Select *,
+sum(Salary) Over(Partition by JOB) as SumSal
+from EMPLOYEE_SUBQ
+) A
+
+Select JOB,Sum(salary) from EMPLOYEE_SUBQ
+Group by JOB
+
+Select *,
+Sum(Salary) OVER()  as OverallSal,
+Sum(salary) Over(Order by Salary) as RunOrSalSum,
+Sum(Salary) OVER(Partition by JOB)  as JobWiseSal,
+Sum(Salary) OVER(Partition by JOB Order by Salary Desc)  as RangeRUnJobWiseSal,
+Sum(Salary) OVER(Partition by JOB Order by Salary Desc
+Rows between UNBOUNDED PRECEDING AND CURRENT ROW)  as RowsRUnJobWiseSal,
+Avg(Salary) OVER(Partition by JOB Order by Salary Desc
+Range between UNBOUNDED PRECEDING AND CURRENT ROW)
+ as RangesRunAvg, -- Default Ranges all duplicates will be taken into account as same 
+Avg(Salary) OVER(Partition by JOB Order by Salary Desc 
+Rows between UNBOUNDED PRECEDING AND CURRENT ROW) as RowsRunAvg
+from EMPLOYEE_SUBQ
+
+
+-- Order by COlumn Ranges unbounded preceding and Current row 
+-- Rows -- Squancial  and Ranges -- All duplicated values 
+
+
+
+Select *, cast(salary as decimal(10,2))/cast(OverallSal as decimal(10,2))*100 as OverPerShare,
+cast(salary as decimal(10,2))/cast(JobWiseSal as decimal(10,2))*100 as JobWisePerShare
+From 
+(
+Select *,
+Sum(Salary) OVER()  as OverallSal,
+-- Sum(salary) Over(Order by Salary) as OrSalSum,
+Sum(Salary) OVER(Partition by JOB)  as JobWiseSal
+from EMPLOYEE_SUBQ
+)A
+
+
+select *, 
+MIN(Salary) OVER(Partition by JOB Order by Salary Desc
+Rows Between unbounded PRECEDING AND CURRENT row) as Max_sal_on_JOB_Order_Sales
+From EMPLOYEE_SUBQ
+
+
+select *, 
+MIN(Salary) OVER(Partition by JOB Order by Salary Desc
+Rows Between unbounded PRECEDING AND UNBOUNDED FOLLOWING) as Max_sal_on_JOB_Order_Sales
+From EMPLOYEE_SUBQ
+
+
+select *, 
+MIN(Salary) OVER(Partition by JOB Order by Salary Desc
+Rows Between 1 PRECEDING AND 1 FOLLOWING) as Max_sal_on_JOB_Order_Sales
+From EMPLOYEE_SUBQ
+
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+
+
+--WindowFun(Exper) Over(Partition by ------ Order BY Salary Ranges between unbounded preceding and current row)
+
+
+-- Orders DB 
+-- segment customer 
+-- if customer total sales > Avg_totalsales and customer_transaction>Avg_transaction gold 
+-- if customer total sales > Avg_totalsales OR customer_transaction>Avg_transaction Silver 
+-- if customer total sales < Avg_totalsales and customer_transaction<Avg_transaction gold
+
+--All transaction details  Sales Transaction AvgSales Avg_Transaction
+
+Select *,
+Case 
+	when Sales>=AvgSales AND NoOfTran>=AvgNoOfTran Then 'Gold'
+	when Sales>=AvgSales OR NoOfTran>=AvgNoOfTran Then 'Silver'
+	when Sales !>AvgSales AND NoOfTran!>AvgNoOfTran Then 'Branze'
+	Else 'NA'
+END AS Customer_Segment
+from 
+(
+Select * ,
+Avg(Sales) Over() as AvgSales,
+Avg(NoOfTran) Over() as AvgNoOfTran
+from 
+(
+Select C.Id, C.FirstName, C.LastName,O.OrderDate, O.OrderNumber, O.TotalAmount,
+sum(TotalAmount) Over(Partition by C.id) as Sales,
+Count(OrderNumber) Over(Partition by C.ID) as NoOfTran
+from Customer AS C 
+inner join [dbo].[Order] as O
+on C.Id=O.CustomerId
+) AS A
+)AS B
+
+
+
+use company
+
+Select *,
+Avg(Age) Over(partition by Company, GENDER Order by Age) as Avg_Age
+from EMP_DETAILS
+
+-- Ranking Window Function 
+-- Row_numner()
+-- Rank()
+-- Dense_rank()
+
+Select *,
+Row_number() Over(Order by Salary Desc) as RN,
+Dense_RANK() Over(Order by Salary Desc) as DR,
+RANK() Over(Order by Salary Desc) as RR
 from EMPLOYEE_SUBQ
