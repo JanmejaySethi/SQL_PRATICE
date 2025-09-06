@@ -2876,4 +2876,398 @@ DENSE_RANK() OVER(Order by Salary desc) AS DR
 from EMPLOYEE) A
 Where DR = 3
 
+CREATE TABLE studentRDBasic (
+  name varchar(50),
+  gender varchar(10),
+  age int,
+  mark int
+) 
+
+
+INSERT INTO studentRDBasic ([name], mark, gender, age) VALUES
+('RAM', 65, 'male',17),
+('Alina',  75, 'female',16),
+('Babu',  75, 'male',17),
+('Krish', 55, 'male',16),
+('Kusuma',  65, 'female',15),
+('Rupa', 85, 'female',17),
+('Rob', 57, 'male',17),
+('Kumar',  67, 'male',18),
+('Nilima',  75, 'female',17),
+( 'Ali',  80, 'male',16)
+
+Select * from 
+(
+Select *,
+DENSE_RANK() Over(Order by mark desc) as Denserank
+from studentRDBasic
+)A 
+Where Denserank<=3
+
+
+
+Select * from 
+(
+Select *,
+DENSE_RANK() Over(partition by gender Order by mark desc) as Denserank
+from studentRDBasic
+) A 
+Where Denserank<=2
+
+
+
+CREATE TABLE studentRD (
+  id int,
+  name varchar(50),
+  class varchar(10),
+  mark int,
+  gender varchar(6)
+) 
+
+
+
+
+INSERT INTO studentRD (id, [name], Class, mark, gender) VALUES
+(1, 'John Deo', 'Four', 75, 'female'),
+(2, 'Max Ruin', 'Three', 85, 'male'),
+(3, 'Arnold', 'Three', 55, 'male'),
+(4, 'Krish Star', 'Four', 60, 'female'),
+(5, 'John Mike', 'Four', 60, 'female'),
+(6, 'Alex John', 'Four', 55, 'male'),
+(7, 'My John Rob', 'Five', 78, 'male'),
+(8, 'Asruid', 'Five', 85, 'male'),
+(9, 'Tes Qry', 'Six', 78, 'male'),
+(10, 'Big John', 'Four', 55, 'female'),
+(11, 'Ronald', 'Six', 89, 'female'),
+(12, 'Recky', 'Six', 94, 'female'),
+(13, 'Kty', 'Seven', 88, 'female'),
+(14, 'Bigy', 'Seven', 88, 'female'),
+(15, 'Tade Row', 'Four', 88, 'male'),
+(16, 'Gimmy', 'Four', 88, 'male'),
+(17, 'Tumyu', 'Six', 54, 'male'),
+(18, 'Honny', 'Five', 75, 'male'),
+(19, 'Tinny', 'Nine', 18, 'male'),
+(20, 'Jackly', 'Nine', 65, 'female'),
+(21, 'Babby John', 'Four', 69, 'female'),
+(22, 'Reggid', 'Seven', 55, 'female'),
+(23, 'Herod', 'Eight', 79, 'male'),
+(24, 'Tiddy Now', 'Seven', 78, 'male'),
+(25, 'Giff Tow', 'Seven', 88, 'male'),
+(26, 'Crelea', 'Seven', 79, 'male'),
+(27, 'Big Nose', 'Three', 81, 'female'),
+(28, 'Rojj Base', 'Seven', 86, 'female'),
+(29, 'Tess Played', 'Seven', 55, 'male'),
+(30, 'Reppy Red', 'Six', 79, 'female'),
+(31, 'Marry Toeey', 'Four', 88, 'male'),
+(32, 'Binn Rott', 'Seven', 90, 'female'),
+(33, 'Kenn Rein', 'Six', 96, 'female'),
+(34, 'Gain Toe', 'Seven', 69, 'male'),
+(35, 'Rows Noump', 'Six', 88, 'female');
+
+
+Select * from 
+(
+Select *,
+DENSE_RANK() Over(partition by Class, Gender Order by Mark Desc) as DR,
+Row_Number() Over(partition by Class, Gender Order by Mark Desc) as RN,
+Rank() Over(partition by Class, Gender Order by Mark Desc) as RK
+from studentRD
+) AS A 
+Where DR=1
+
+-------------------- 
+
+
+Select * from 
+(
+Select *,
+Row_number() Over(Order by Sales Desc) as RN
+from 
+(Select (FirstName+Space(1)+LastName) as C_Name,
+Sum(O.[TotalAmount]) as Sales
+from Customer as C
+Inner join [Order] as O 
+on C.Id=O.CustomerId
+group by (FirstName+Space(1)+LastName)
+) AS A
+) AS B
+Where B.RN<=10
+
+-----------------
+
+
+-- Whats my total Sales?
+Select sum(TotalAmount) from [Order]  -- 1354458.59
+
+-- How many new customer cm every month
+
+Select datename(Year,FirstTrans)+'-'+datename(Month,FirstTrans) as YearMonth,
+Count(CustomerId) as NoOfPplCameNewly
+From
+(Select CustomerId, min(Orderdate) as FirstTrans from [Order]
+Group by CustomerId
+) A
+Group by datename(Year,FirstTrans)+'-'+datename(Month,FirstTrans)
+
+-- All customers whos sales and transactions is more then avg
+
+Select * from 
+(
+Select *,
+Avg(Total_Transactions) Over() as Avg_transaction,
+Avg(Total_sales) Over() as Avg_Salaes
+From
+(Select CustomerId,
+Count(O.Id) as Total_Transactions,
+Sum(TotalAmount) as Total_sales
+from [Order] AS O
+Group by CustomerId) A
+)B 
+Where Total_Transactions>=Avg_transaction
+AND Total_sales>=Avg_Salaes
+
+
+-- give a customer who didn't ordered 
+select distinct id from Customer
+except 
+select distinct Customerid from [Order]
+
+-- Every month repet customer 
+Select * from 
+(Select CustomerId, Count(Distinct datename(Year,OrderDate)+'-'+datename(Month,OrderDate)) as NoOfMonths from [Order]
+Group by CustomerId)
+A
+Where NoOfMonths>=
+(Select Count(Distinct datename(Year,OrderDate)+'-'+datename(Month,OrderDate)) from [Order])
+
+-- How many Products Sold Per Year
+Select Datename(Year,O.Orderdate) as Year, SUm(OI.Quantity) as TotalQtySold from [Order] AS O
+inner join [Orderitem] as OI 
+on O.Id=OI.OrderId
+Group by Datename(Year,O.Orderdate)
+
+-- Country-wise no of customers 
+Select country, count(Id) as noofcustomer
+from Customer
+group by country
+
+-- Get me the top Customer which will yeld 80% sales 
+
+Select *, (RuuningSales/Totalsales)*100 as PerShare from 
+(
+Select *,
+Sum(Sales) Over(Order by Sales desc) as RuuningSales,
+Sum(Sales) Over() as Totalsales
+from 
+(
+Select (C.FirstName+Space(1)+C.LastName) as C_Name, 
+Sum(O.TotalAmount) as Sales
+From Customer as C
+inner join [Order] as O
+on C.Id=O.CustomerId
+Group by (C.FirstName+Space(1)+C.LastName)
+) AS A 
+)AS B
+Where (RuuningSales/Totalsales)*100<=81
+
+-- Get me the top products which will yeld 80% sales  
+
+Select * from 
+(
+Select *,
+Sum(Sales) Over(Order by Sales Desc) as ruuningsalesbyprodu,
+Sum(Sales) Over() as totalsales,
+(Sum(Sales) Over(Order by Sales Desc)/Sum(Sales) Over())*100 as Pershare
+From(
+Select P.ProductName, SUm(OI.UnitPrice*OI.Quantity) as Sales from Product as P
+Inner join Orderitem as OI 
+on P.id=OI.ProductID
+Group by ProductName
+) AS A 
+) AS B
+where Pershare<=81
+
+-- Supplier-wise total products suuplied 
+
+select S.CompanyName, Count(distinct P.Id) as NoOfProduct from Supplier AS S 
+inner join Product as P 
+on S.Id=P.SupplierId
+Group by S.CompanyName
+
+------------------------------
+------------------------------
+
+-- Product wise top months on which total Qty are sold
+
+Select * from 
+(
+Select *,
+Row_Number() Over(partition by ProductName Order by QTY desc) as RN
+from 
+(
+Select P.ProductName, 
+Datename(month,Orderdate) as Mnt, 
+Sum(OI.Quantity) as QTY  from Product as P
+left join OrderItem as OI on P.Id=OI.ProductId
+left join [ORDER] as O on OI.OrderId=O.Id
+Group by P.ProductName, 
+Datename(month,Orderdate)
+) AS A
+) AS B 
+WHere RN=1
+
+-- Product wise Bottom months on which total Qty are sold
+
+Select * from 
+(
+Select *,
+Row_Number() Over(partition by ProductName Order by QTY) as RN
+from 
+(
+Select P.ProductName, 
+Datename(month,Orderdate) as Mnt, 
+Sum(OI.Quantity) as QTY  from Product as P
+Inner join OrderItem as OI on P.Id=OI.ProductId
+inner join [ORDER] as O on OI.OrderId=O.Id
+Group by P.ProductName, 
+Datename(month,Orderdate)
+) AS A
+) AS B 
+WHere RN=1
+
+
+
+Select * from 
+(
+Select *,
+Row_Number() Over(partition by ProductName Order by QTY) as MinQty,
+Row_Number() Over(partition by ProductName Order by QTY Desc) as MaxQty
+from 
+(
+Select P.ProductName, 
+Datename(month,Orderdate) as Mnt, 
+Sum(OI.Quantity) as QTY  from Product as P
+Inner join OrderItem as OI on P.Id=OI.ProductId
+inner join [ORDER] as O on OI.OrderId=O.Id
+Group by P.ProductName, 
+Datename(month,Orderdate)
+) AS A
+) AS B 
+WHere MinQty=1 or MaxQty=1
+
+-- Customer who didn't ordered in last 6 months 
+--  who are ordered except last 6 month
+select FirstName+Space(1)+[lastName] from Customer as C
+inner join [Order] as O
+on C.Id=O.CustomerId
+Where OrderDate between (select min(OrderDate) from [Order])  AND dateadd(Month, -6, (select Max(OrderDate) from [Order])) 
+ except
+-- who are ordered in last 6 months 
+select FirstName+Space(1)+[lastName] from Customer as C
+inner join [Order] as O
+on C.Id=O.CustomerId
+Where OrderDate between dateadd(Month, -6, (select Max(OrderDate) from [Order])) AND (select Max(OrderDate) from [Order]) 
+ 
+
+ -- Select dateadd(Month, -6, (select Max(OrderDate) from [Order]) )  -- 2013-11-06 00:00:00.000
+ -- Select (select Max(OrderDate) from [Order])  -- 2014-05-06 00:00:00.000
+
+-- Which product didn't sold at all (Joins, Set , Sub Quesries)
+
+Select distinct ID from Product
+except
+Select Productid from OrderItem
+
+Select * from Product as P 
+left join OrderItem as OI on P.Id=OI.ProductID
+Where OI.ProductID is null
+
+Select * from Product where Id not in (
+Select Productid from OrderItem )
+
+
+-- Country wise supplier count
+
+Select Country, count(id) from Supplier 
+Group by Country
+
+-- Sales till date running total
+
+Select *, sum(sales) Over(Order by Orderdate) as salestildate
+from 
+(
+Select Orderdate, sum(totalamount) as sales from [Order]
+Group by Orderdate
+)A
+
+
+-- Get me day wise sales
+Select DayNa, sum(TotalAmount) as sales from
+(
+Select *, datename(weekday,Orderdate) as DayNa from [Order]
+)A
+Group by Dayna
+
+-- Get me weekday and weekend wie sales
+
+Select 
+	case 
+	    when datename(weekday,Orderdate) in ('Saturday', 'Sunday')  Then 'Weekend'
+		when datename(weekday,Orderdate) not in ('Saturday', 'Sunday')  Then 'Weekday'
+        else 'NA'
+	END as dayna,
+	Sum(Totalamount) as sales
+	from [Order]
+	Group by 
+	case 
+	    when datename(weekday,Orderdate) in ('Saturday', 'Sunday')  Then 'Weekend'
+		when datename(weekday,Orderdate) not in ('Saturday', 'Sunday')  Then 'Weekday'
+        else 'NA'
+	END
+
+-- Get me month-Year wise sales 
+
+Select datename(year, orderdate) + '-'+  datename(month, orderdate) as Yearmonth, Sum(TotalAmount)
+From [Order]
+Group by datename(year, orderdate) + '-'+  datename(month, orderdate)
+
+
+-- Get me top 10 selling product name
+Select * from 
+(
+Select *,
+Dense_Rank() Over(Order by TotalQTY desc) as topRN,
+dense_Rank() Over(Order by TotalQTY) as BottomRN
+from 
+(
+Select P.ProductName, sum(OI.Quantity) as TotalQTY from Product as P 
+inner join [Orderitem] as OI 
+on P.Id=OI.ProductId
+Group by ProductName
+)A
+)B WHere topRN<=10 Or  BottomRN<=10
+
+
+-- product by type of package 
+
+Select 
+Case  
+		when Package like '%Bags%' Then 'Bags'
+		when Package like '%Box%' Then 'Boxes'
+		when Package like '%Bottle%' Then 'Bottles'
+		when Package like '%Jar%' Then 'Jar'
+		when Package like '%pkgs%' Then 'Packages'
+		when Package like '%Tin%' Then 'Tins'
+		Else 'Unknow' END as Packagetype,
+		Count(Id) as noofProd
+from Product
+Group by 
+Case  
+		when Package like '%Bags%' Then 'Bags'
+		when Package like '%Box%' Then 'Boxes'
+		when Package like '%Bottle%' Then 'Bottles'
+		when Package like '%Jar%' Then 'Jar'
+		when Package like '%pkgs%' Then 'Packages'
+		when Package like '%Tin%' Then 'Tins'
+		Else 'Unknow' END
 
